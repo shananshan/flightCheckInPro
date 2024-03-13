@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Passenger {
 	
 	String firstName;
@@ -6,6 +8,28 @@ public class Passenger {
 	Float luggageWeight;
 	Boolean checkInSuccess;
 	Boolean feePayment;
+    String classType; // "Economy" or "Business"
+    
+    //Constructor
+    public Passenger(String firstName, String flightCode, String classType) {
+        this.firstName = firstName;
+        this.flightCode = flightCode;
+        this.classType = classType;
+        this.checkInSuccess = false; // Initialization set to incomplete boarding
+        this.feePayment = false; // Initialization set to unpaid baggage fees
+        this.luggageSize = generateLuggageSize();
+        this.luggageWeight = generateLuggageWeight();
+    }
+    
+    //Randomly generated baggage volume: 125-512000
+    private float generateLuggageSize() {
+        return 125f + new Random().nextFloat() * (512000f - 125f); 
+    }
+
+    // Randomly generated baggage weight: 5 - 50 kilograms
+    private float generateLuggageWeight() {
+        return 5f + new Random().nextFloat() * (50f - 5f); // 
+    }
 	
     public boolean state() {
         // store the state of the passenger
@@ -39,13 +63,11 @@ public class Passenger {
 
 	public Boolean getCheckInSuccess() {
 		// TODO Auto-generated method stub
-		//初始false
 		return null;
 	}
 
 	public Boolean getFeePayment() {
 		// TODO Auto-generated method stub
-		//初始false
 		return null;
 	}
 }
