@@ -1,5 +1,6 @@
 import java.time.LocalTime;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class CheckInDesk {
@@ -14,10 +15,25 @@ public class CheckInDesk {
 	static Queue<Passenger> businessCheckIn= new LinkedList<>();
 	static Queue<Passenger> economySecurityCheck= new LinkedList<>();
 	static Queue<Passenger> businessSecurityCheck= new LinkedList<>();
-	
-	
-	
-    Passenger p = new Passenger();
+
+	public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
+		for (Passenger passenger : passengerList) {
+			if (passenger.classType.equals("1")) {
+				economy.offer(passenger);
+			} else if (passenger.classType.equals("0")) {
+				business.offer(passenger);
+			}
+		}
+	}
+
+//    Passenger p = new Passenger();
+//    Queue<Passenger> queue = new LinkedList<>(); // put p in q
+    public static void addToqueue(){
+        // button call it to add p to queue
+    }
+
+
+
     public int deskNum(){
         int desknum = 1;
         desknum += 1;
@@ -29,7 +45,7 @@ public class CheckInDesk {
         return checkornot;
     }
 
-    public void baggage(){
+    public void baggage(Passenger p){
         float dimension = p.getLuggageSize();
         float weight = p.getWeight();
         float fee = Flight.calulatefee(dimension,weight);
@@ -43,7 +59,7 @@ public class CheckInDesk {
     	//假定一个当前时间
     	time.withHour(6).withMinute(30).withSecond(20);
     	LocalTime flightTime = Flight.getFlightTime();
-    	
+
     	String firstName = pass.getFirstName();
     	String flightCode = pass.getFlightCode();
     	Float luggageSize = pass.getLuggageSize();
@@ -52,9 +68,9 @@ public class CheckInDesk {
     	Boolean feePayment = pass.getFeePayment();
     	float fee = 0;
     	String warning = null;
-    	
+
     	if(!checkInSuccess & !feePayment) {
-    		
+
     		if((time.getHour() < flightTime.getHour()) | ((time.getHour() == flightTime.getHour()) & (time.getMinute() < flightTime.getMinute())) | (time.getHour() == flightTime.getHour()) & (time.getMinute() == flightTime.getMinute()) & (time.getSecond() <= flightTime.getSecond())) {
         		fee = Flight.calulatefee(luggageSize,luggageWeight);
         		pass.checkInSuccess = true;
@@ -67,7 +83,7 @@ public class CheckInDesk {
     			desk1Vacancy = true;
     			return warning;
     		}
-    		
+
     	}else {
     		warning = giveRepeatCheckInError();
     		desk1Vacancy = true;
@@ -75,8 +91,8 @@ public class CheckInDesk {
     	}
 
     }
-    
-    
+
+
     public static String genrateBussinessDesk(){
     	Passenger pass = businessCheckIn.remove();
     	deskBVacancy = false;
@@ -84,7 +100,7 @@ public class CheckInDesk {
     	//假定一个当前时间
     	time.withHour(6).withMinute(30).withSecond(20);
     	LocalTime flightTime = Flight.getFlightTime();
-    	
+
     	String firstName = pass.getFirstName();
     	String flightCode = pass.getFlightCode();
     	Float luggageSize = pass.getLuggageSize();
@@ -93,9 +109,9 @@ public class CheckInDesk {
     	Boolean feePayment = pass.getFeePayment();
     	float fee = 0;
     	String warning = null;
-    	
+
     	if(!checkInSuccess & !feePayment) {
-    		
+
     		if((time.getHour() < flightTime.getHour()) | ((time.getHour() == flightTime.getHour()) & (time.getMinute() < flightTime.getMinute())) | (time.getHour() == flightTime.getHour()) & (time.getMinute() == flightTime.getMinute()) & (time.getSecond() <= flightTime.getSecond())) {
         		fee = Flight.calulatefee(luggageSize,luggageWeight);
         		pass.checkInSuccess = true;
@@ -108,7 +124,7 @@ public class CheckInDesk {
     			deskBVacancy = true;
     			return warning;
     		}
-    		
+
     	}else {
     		warning = giveRepeatCheckInError();
     		deskBVacancy = true;
