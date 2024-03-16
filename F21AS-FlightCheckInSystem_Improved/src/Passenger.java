@@ -1,14 +1,16 @@
+import java.util.Objects;
 import java.util.Random;
 
 public class Passenger {
-	
+	String name;
 	String firstName;
+	String lastName;
 	String flightCode;
 	Float luggageSize;
 	Float luggageWeight;
 	Boolean checkInSuccess;
 	Boolean feePayment;
-    String classType; // "Economy" or "Business"
+   	String classType; // "Economy" or "Business"
     
     //Constructor
     public Passenger(String firstName, String flightCode, String classType) {
@@ -21,6 +23,16 @@ public class Passenger {
         this.luggageWeight = generateLuggageWeight();
     }
     
+    Passenger(String[] args) {
+    	firstName = args[0];
+    	lastName = args[1];
+        name = args[0] + " " + args[1];
+        flightCode = args[2];
+        checkInSuccess = Objects.equals(args[3], "TRUE");
+        feePayment = Objects.equals(args[4], "TRUE");
+        classType = args[5];
+    }
+
     //Randomly generated baggage volume: 125-512000
     private float generateLuggageSize() {
         return 125f + new Random().nextFloat() * (512000f - 125f); 
@@ -45,8 +57,18 @@ public class Passenger {
         // give a weight of luggage for each passenger randomly
         return 0;
     }
+    
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	public String getFirstName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public String getLastName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -70,4 +92,9 @@ public class Passenger {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+    public String toString() {
+        return String.format(name + " , " + flightCode + " , " + luggageSize + " , " + luggageWeight + " , " + classType + " , " + (checkInSuccess ? "True" : "False"));
+    }
+ 
 }
