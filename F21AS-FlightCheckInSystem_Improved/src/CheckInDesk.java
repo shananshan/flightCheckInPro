@@ -56,7 +56,7 @@ public class CheckInDesk {
      * Generates check-in for economy class passengers.
      * @return Warning message if any.
      */
-    public static String genrateEconomyDesk(){
+    public static Queue<Passenger> genrateEconomyDesk(Queue<Passenger> economyCheckIn){
         // Removes a passenger from the economy check-in queue and processes their check-in.
         Passenger pass = economyCheckIn.remove();
         desk1Vacancy = false;
@@ -84,14 +84,14 @@ public class CheckInDesk {
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             desk1Vacancy = true;
         }
-        return warning;
+        return economySecurityCheck;
     }
     
     /**
      * Generates check-in for business class passengers.
      * @return Warning message if any.
      */
-    public static String genrateBussinessDesk(){
+    public static Queue<Passenger> genrateBussinessDesk(Queue<Passenger> businessCheckIn){
         // Removes a passenger from the business check-in queue and processes their check-in.
         Passenger pass = businessCheckIn.remove();
         deskBVacancy = false;
@@ -119,7 +119,7 @@ public class CheckInDesk {
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
-        return warning;
+        return businessSecurityCheck;
     }
 
     // Returns a warning message for late check-in.
