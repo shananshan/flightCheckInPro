@@ -9,12 +9,15 @@ public class CheckInDesk {
     need a queue, include the waiting passengers' info: name, booking code, flight code, luggage[dimension, weight], state
     is one of the thread
      */
-	private static boolean desk1Vacancy = true;
-	private static boolean deskBVacancy = true;
-	static Queue<Passenger> economyCheckIn = new LinkedList<>();
-	static Queue<Passenger> businessCheckIn= new LinkedList<>();
-	static Queue<Passenger> economySecurityCheck= new LinkedList<>();
-	static Queue<Passenger> businessSecurityCheck= new LinkedList<>();
+	// Vacancy status of check-in desks
+    private static boolean desk1Vacancy = true;		//economy
+    private static boolean deskBVacancy = true;		//business
+    
+    // Queues for different check-in and security check processes
+    static Queue<Passenger> economyCheckIn = new LinkedList<>();
+    static Queue<Passenger> businessCheckIn= new LinkedList<>();
+    static Queue<Passenger> economySecurityCheck= new LinkedList<>();
+    static Queue<Passenger> businessSecurityCheck= new LinkedList<>();
 
 	public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
 		for (Passenger passenger : passengerList) {
@@ -49,100 +52,92 @@ public class CheckInDesk {
 
     }
 
+ /**
+     * Generates check-in for economy class passengers.
+     * @return Warning message if any.
+     */
     public static String genrateEconomyDesk(){
-    	Passenger pass = economyCheckIn.remove();
-    	desk1Vacancy = false;
-    	LocalTime time = LocalTime.now();
-    	//假定一个当前时间
-    	time.withHour(6).withMinute(30).withSecond(20);
-    	LocalTime flightTime = Flight.getFlightTime();
+        // Removes a passenger from the economy check-in queue and processes their check-in.
+        Passenger pass = economyCheckIn.remove();
+        desk1Vacancy = false;
+        LocalTime time = LocalTime.now(); // Current time
+        time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+        LocalTime flightTime = Flight.getFlightTime();
+        String warning = null;
 
-    	String firstName = pass.getFirstName();
-    	String flightCode = pass.getFlightCode();
-    	Float luggageSize = pass.getLuggageSize();
-    	Float luggageWeight = pass.getLuggageWeight();
-    	Boolean checkInSuccess = pass.getCheckInSuccess();
-    	Boolean feePayment = pass.getFeePayment();
-    	float fee = 0;
-    	String warning = null;
-
-    	if(!checkInSuccess & !feePayment) {
-
-    		if((time.getHour() < flightTime.getHour()) | ((time.getHour() == flightTime.getHour()) & (time.getMinute() < flightTime.getMinute())) | (time.getHour() == flightTime.getHour()) & (time.getMinute() == flightTime.getMinute()) & (time.getSecond() <= flightTime.getSecond())) {
-        		fee = Flight.calulatefee(luggageSize,luggageWeight);
-        		pass.checkInSuccess = true;
-        		pass.feePayment = true;
-        		desk1Vacancy = true;
-        		economySecurityCheck.add(pass);
-        		return warning;
-    		}else {
-    			warning = giveLateCheckInError();
-    			desk1Vacancy = true;
-    			return warning;
-    		}
-
-    	}else {
-    		warning = giveRepeatCheckInError();
-    		desk1Vacancy = true;
-    		return warning;
-    	}
-
+        // Check if the passenger's check-in and fee payment are not yet completed
+        if (!pass.getCheckInSuccess() && !pass.getFeePayment()) {
+            // Check if the current time is before or equal to the flight time
+            if (time.isBefore(flightTime) || time.equals(flightTime)) {
+                // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
+                float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
+                pass.setCheckInSuccess(true);
+                pass.setFeePayment(true);
+                desk1Vacancy = true;
+                economySecurityCheck.add(pass);
+            } else {
+                warning = giveLateCheckInError(); // Generate a warning message for late check-in
+                desk1Vacancy = true;
+            }
+        } else {
+            warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
+            desk1Vacancy = true;
+        }
+        return warning;
     }
-
-
+    
+    /**
+     * Generates check-in for business class passengers.
+     * @return Warning message if any.
+     */
     public static String genrateBussinessDesk(){
-    	Passenger pass = businessCheckIn.remove();
-    	deskBVacancy = false;
-    	LocalTime time = LocalTime.now();
-    	//假定一个当前时间
-    	time.withHour(6).withMinute(30).withSecond(20);
-    	LocalTime flightTime = Flight.getFlightTime();
+        // Removes a passenger from the business check-in queue and processes their check-in.
+        Passenger pass = businessCheckIn.remove();
+        deskBVacancy = false;
+        LocalTime time = LocalTime.now(); // Current time
+        time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+        LocalTime flightTime = Flight.getFlightTime();
+        String warning = null;
 
-    	String firstName = pass.getFirstName();
-    	String flightCode = pass.getFlightCode();
-    	Float luggageSize = pass.getLuggageSize();
-    	Float luggageWeight = pass.getLuggageWeight();
-    	Boolean checkInSuccess = pass.getCheckInSuccess();
-    	Boolean feePayment = pass.getFeePayment();
-    	float fee = 0;
-    	String warning = null;
-
-    	if(!checkInSuccess & !feePayment) {
-
-    		if((time.getHour() < flightTime.getHour()) | ((time.getHour() == flightTime.getHour()) & (time.getMinute() < flightTime.getMinute())) | (time.getHour() == flightTime.getHour()) & (time.getMinute() == flightTime.getMinute()) & (time.getSecond() <= flightTime.getSecond())) {
-        		fee = Flight.calulatefee(luggageSize,luggageWeight);
-        		pass.checkInSuccess = true;
-        		pass.feePayment = true;
-        		deskBVacancy = true;
-        		businessSecurityCheck.add(pass);
-        		return warning;
-    		}else {
-    			warning = giveLateCheckInError();
-    			deskBVacancy = true;
-    			return warning;
-    		}
-
-    	}else {
-    		warning = giveRepeatCheckInError();
-    		deskBVacancy = true;
-    		return warning;
-    	}
-
+        // Check if the passenger's check-in and fee payment are not yet completed
+        if (!pass.getCheckInSuccess() && !pass.getFeePayment()) {
+            // Check if the current time is before or equal to the flight time
+            if (time.isBefore(flightTime) || time.equals(flightTime)) {
+                // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
+                float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
+                pass.setCheckInSuccess(true);
+                pass.setFeePayment(true);
+                deskBVacancy = true;
+                businessSecurityCheck.add(pass);
+            } else {
+                warning = giveLateCheckInError(); // Generate a warning message for late check-in
+                deskBVacancy = true;
+            }
+        } else {
+            warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
+            deskBVacancy = true;
+        }
+        return warning;
     }
 
+    // Returns a warning message for late check-in.
+    private static String giveLateCheckInError() {
+        return "You are late!";
+    }
 
-	private static String giveLateCheckInError() {
-		String lateCheckInWarning = "You are late!";
-		return lateCheckInWarning;
-	}
+    // Returns a warning message for repeated check-in.
+    private static String giveRepeatCheckInError() {
+        return "You have already checked in!";
+    }
 
-	private static String giveRepeatCheckInError() {
-		String repeatCheckInWarning = "You have cheecked in!";
-		return repeatCheckInWarning;
-	}
-
-	public static boolean checkAPassenger(Passenger p){
-        boolean newState = p.state();
-        return newState;
+    /**
+     * Checks the state of a passenger.
+     * @param p The passenger to be checked.
+     * @return The state of the passenger.
+     */
+    public static boolean checkAPassenger(Passenger p){
+        // This method checks the state of a passenger and returns it.
+        return p.state();
     }
 }
+
