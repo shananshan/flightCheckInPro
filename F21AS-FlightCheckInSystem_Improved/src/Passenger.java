@@ -29,7 +29,7 @@ public class Passenger {
         name = args[0] + " " + args[1];
         flightCode = args[2];
         checkInSuccess = Objects.equals(args[3], "TRUE");
-        feePayment = Objects.equals(args[4], "TRUE");
+        feePaymentSuccess = Objects.equals(args[4], "TRUE");
         classType = args[5];
     }
 
@@ -48,16 +48,6 @@ public class Passenger {
         return false;
     }
 
-	public void setCheckInSuccess(boolean b) {
-		this.checkInSuccess = true; 
-		
-	}
-
-	public void setFeePaymentSuccess(boolean b) {
-		this.feePaymentSuccess = true;
-		
-	}
-	
 	public String getName() {
 		return name;
 	}
@@ -86,8 +76,20 @@ public class Passenger {
 		return checkInSuccess;
 	}
 
+	
 	public boolean getFeePaymentSuccess() {
+
 		return feePaymentSuccess;
+	}
+
+	public void setCheckInSuccess(boolean b) {
+		this.checkInSuccess = true; 
+		
+	}
+
+	public void setFeePaymentSuccess(boolean b) {
+		this.feePaymentSuccess = true;
+		
 	}
 	
     public String toString() {
