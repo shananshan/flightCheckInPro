@@ -61,9 +61,9 @@ public class Passenger {
 		return flightCode;
 	}
 
-    public int getLuggageSize(){
-        return luggageSize;
-    }
+	public int getLuggageSize(){
+	        return luggageSize;
+	}
 
 	public Float getLuggageWeight() {
 		return luggageWeight;
