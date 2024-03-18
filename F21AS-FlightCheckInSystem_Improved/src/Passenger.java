@@ -30,8 +30,8 @@ public class Passenger {
     private int generateLuggageSize() {
         Random random = new Random();
         int length = 5 + random.nextInt(96); // 5-100
-	    int width = 5 + random.nextInt(96);
-	    int height = 5 + random.nextInt(96);
+	int width = 5 + random.nextInt(96);
+	int height = 5 + random.nextInt(96);
         return length * width * height; 
     }
 
