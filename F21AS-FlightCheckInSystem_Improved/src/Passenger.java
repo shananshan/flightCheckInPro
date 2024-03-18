@@ -9,7 +9,7 @@ public class Passenger {
 	Float luggageSize;
 	Float luggageWeight;
 	Boolean checkInSuccess;
-	Boolean feePayment;
+	Boolean feePaymentSuccess;	//payment success or not
    	String classType; // "Economy" or "Business"
     
     //Constructor
