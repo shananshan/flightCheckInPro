@@ -6,7 +6,7 @@ public class Passenger {
 	String firstName;
 	String lastName;
 	String flightCode;
-	Float luggageSize;
+	int luggageSize;
 	Float luggageWeight;
 	Boolean checkInSuccess;
 	Boolean feePaymentSuccess;	//payment success or not
@@ -22,7 +22,7 @@ public class Passenger {
         checkInSuccess = Objects.equals(args[4], "TRUE");
         feePaymentSuccess = false;
         classType = args[5];
-	    fee = 0;
+	fee = 0;
         luggageSize = generateLuggageSize();
         luggageWeight = generateLuggageWeight();
     }
@@ -61,7 +61,7 @@ public class Passenger {
 		return flightCode;
 	}
 
-    public Float getLuggageSize(){
+    public int getLuggageSize(){
         return luggageSize;
     }
 
