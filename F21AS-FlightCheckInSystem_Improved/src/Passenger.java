@@ -27,9 +27,13 @@ public class Passenger {
         luggageWeight = generateLuggageWeight();
     }
 
-    //Randomly generated baggage volume: 125-512000
-    private float generateLuggageSize() {
-        return 125f + new Random().nextFloat() * (512000f - 125f); 
+    private String generateLuggageSize() {
+        Random random = new Random();
+        // Randomly generated baggage volume
+        int length = 5 + random.nextInt(96); // 5-100
+        int width = 5 + random.nextInt(96);
+        int height = 5 + random.nextInt(96);
+        return length + "cmx" + width + "cmx" + height + " cm";
     }
 
     // Randomly generated baggage weight: 5 - 50 kilograms
