@@ -2,7 +2,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Passenger {
-	String name;
+	static String name;
 	String firstName;
 	String lastName;
 	String flightCode;
@@ -48,49 +48,36 @@ public class Passenger {
         return false;
     }
 
-    public float getLuggageSize() {
-        // give a dimension of luggage for each passenger randomly
-        return 0;
-    }
-
-    public float getWeight() {
-        // give a weight of luggage for each passenger randomly
-        return 0;
-    }
-    
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	public String getFirstName() {
-		// TODO Auto-generated method stub
-		return null;
+		return firstName;
 	}
 	
 	public String getLastName() {
-		// TODO Auto-generated method stub
-		return null;
+		return lastName;
 	}
 
 	public String getFlightCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return flightCode;
 	}
 
+    public Float getLuggageSize(){
+        return luggageSize;
+    }
+
 	public Float getLuggageWeight() {
-		// TODO Auto-generated method stub
-		return null;
+		return luggageWeight;
 	}
 
 	public Boolean getCheckInSuccess() {
-		// TODO Auto-generated method stub
-		return null;
+		return checkInSuccess;
 	}
 
 	public Boolean getFeePayment() {
-		// TODO Auto-generated method stub
-		return null;
+		return feePayment;
 	}
 	
     public String toString() {

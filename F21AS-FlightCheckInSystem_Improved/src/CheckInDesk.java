@@ -26,15 +26,12 @@ public class CheckInDesk {
 		}
 	}
 
-//    Passenger p = new Passenger();
-//    Queue<Passenger> queue = new LinkedList<>(); // put p in q
-    public static void addToqueue(){
-        // button call it to add p to queue
-    }
+	public static void closeDesk() {
+		// close the desk after take off
+	}
 
 
-
-    public int deskNum(){
+	public int deskNum(){
         int desknum = 1;
         desknum += 1;
         return desknum;
@@ -46,8 +43,8 @@ public class CheckInDesk {
     }
 
     public void baggage(Passenger p){
-        float dimension = p.getLuggageSize();
-        float weight = p.getWeight();
+        float dimension = p.luggageSize;
+        float weight = p.luggageWeight;
         float fee = Flight.calulatefee(dimension,weight);
 
     }
