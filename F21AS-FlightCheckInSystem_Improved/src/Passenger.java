@@ -33,6 +33,7 @@ public class Passenger {
         checkInSuccess = Objects.equals(args[3], "TRUE");
         feePaymentSuccess = Objects.equals(args[4], "TRUE");
         classType = args[5];
+	fee = 0;
     }
 
     //Randomly generated baggage volume: 125-512000
