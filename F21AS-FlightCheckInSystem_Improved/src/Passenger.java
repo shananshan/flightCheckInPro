@@ -2,7 +2,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Passenger {
-	static String name;
+	String name;
 	String firstName;
 	String lastName;
 	String flightCode;
@@ -14,19 +14,6 @@ public class Passenger {
 	public float fee;
 
     //Constructor
-    public Passenger(String name, String lastName, String firstName, String flightCode, String classType) {
-        this.name = name;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.flightCode = flightCode;
-        this.classType = classType;
-        this.checkInSuccess = false; // Initialization set to incomplete boarding
-        this.feePaymentSuccess = false; // Initialization set to unpaid baggage fees
-        this.fee = 0;
-        this.luggageSize = generateLuggageSize();
-        this.luggageWeight = generateLuggageWeight();
-    }
-    
     Passenger(String[] args) {
     	firstName = args[1];
     	lastName = args[2];
@@ -36,6 +23,8 @@ public class Passenger {
         feePaymentSuccess = false;
         classType = args[5];
 	    fee = 0;
+        luggageSize = generateLuggageSize();
+        luggageWeight = generateLuggageWeight();
     }
 
     //Randomly generated baggage volume: 125-512000
@@ -100,7 +89,7 @@ public class Passenger {
 	}
 	
     public String toString() {
-        return String.format(name + " , " + flightCode + " , " + luggageSize + " , " + luggageWeight + " , " + classType + " , " + (checkInSuccess ? "True" : "False"));
+        return String.format(name + " , " + flightCode + " , " + luggageSize + " , " + luggageWeight + " , " + classType + " , " + (checkInSuccess ? "True" : "False")+" , "+fee);
     }
  
 }
