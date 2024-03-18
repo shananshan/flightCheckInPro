@@ -4,12 +4,14 @@ public class MyTimer {
     private static Timer timer = new Timer();
 
     // passenger enter the queue
-    public static void passengerArrival(List<Passenger> passengerQueue, Queue<Passenger> economy, Queue<Passenger> business) {
+    public static void passengerArrival(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
         // every once in a while, a new passenger enter the queue
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                CheckInDesk.separatePassengersByClassType(passengerQueue, economy, business);
+                CheckInDesk.separatePassengersByClassType(passengerList, economy, business);
+
+                System.out.println("New passenger: ");
             }
         }, 0, 1000); // 1s
     }
@@ -18,8 +20,9 @@ public class MyTimer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                CheckInDesk.closeDesk();
-                System.out.println("Flight is departing. Check-in closed.");
+//                CheckInDesk.closeDesk();
+//                System.out.println("Flight is departing. Check-in closed.");
+                System.out.println("Processing...");
                 processPassengers(passengerQueue);
             }
         }, departureTimeInSeconds * 1000); // * 1000ms
