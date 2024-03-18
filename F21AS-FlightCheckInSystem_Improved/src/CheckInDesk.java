@@ -140,4 +140,3 @@ public class CheckInDesk {
         return p.state();
     }
 }
-
