@@ -26,13 +26,13 @@ public class Passenger {
     }
     
     Passenger(String[] args) {
-    	firstName = args[0];
-    	lastName = args[1];
-        name = args[0] + " " + args[1];
-        flightCode = args[2];
-        checkInSuccess = Objects.equals(args[3], "TRUE");
-        feePaymentSuccess = Objects.equals(args[4], "TRUE");
-        classType = args[5];
+    	firstName = args[1];
+    	lastName = args[2];
+        name = args[1] + " " + args[2];
+        flightCode = args[3];
+        checkInSuccess = Objects.equals(args[4], "TRUE");
+        feePaymentSuccess = Objects.equals(args[5], "TRUE");
+        classType = args[6];
 	fee = 0;
     }
 
