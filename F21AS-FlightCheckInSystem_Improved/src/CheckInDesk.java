@@ -66,13 +66,13 @@ public class CheckInDesk {
         String warning = null;
 
         // Check if the passenger's check-in and fee payment are not yet completed
-        if (!pass.getCheckInSuccess() && !pass.getFeePayment()) {
+        if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
                 float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
-                pass.setFeePayment(true);
+                pass.setFeePaymentSuccess(true);
                 desk1Vacancy = true;
                 economySecurityCheck.add(pass);
             } else {
@@ -100,13 +100,13 @@ public class CheckInDesk {
         String warning = null;
 
         // Check if the passenger's check-in and fee payment are not yet completed
-        if (!pass.getCheckInSuccess() && !pass.getFeePayment()) {
+        if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
                 float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
-                pass.setFeePayment(true);
+                pass.setFeePaymentSuccess(true);
                 deskBVacancy = true;
                 businessSecurityCheck.add(pass);
             } else {
