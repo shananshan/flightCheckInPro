@@ -73,6 +73,7 @@ public class CheckInDesk {
                 float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
+                pass.fee = fee;
                 desk1Vacancy = true;
                 economySecurityCheck.add(pass);
             } else {
@@ -107,6 +108,7 @@ public class CheckInDesk {
                 float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
+                pass.fee = fee;
                 deskBVacancy = true;
                 businessSecurityCheck.add(pass);
             } else {
