@@ -11,6 +11,7 @@ public class Passenger {
 	Boolean checkInSuccess;
 	Boolean feePaymentSuccess;	//payment success or not
    	String classType; // "Economy" or "Business"
+	public float fee;
     
     //Constructor
     public Passenger(String firstName, String flightCode, String classType) {
@@ -19,6 +20,7 @@ public class Passenger {
         this.classType = classType;
         this.checkInSuccess = false; // Initialization set to incomplete boarding
         this.feePaymentSuccess = false; // Initialization set to unpaid baggage fees
+        this.fee = 0;
         this.luggageSize = generateLuggageSize();
         this.luggageWeight = generateLuggageWeight();
     }
@@ -72,13 +74,15 @@ public class Passenger {
 		return luggageWeight;
 	}
 
+	public Float getFee() {
+		return fee;
+	}
+	
 	public Boolean getCheckInSuccess() {
 		return checkInSuccess;
 	}
 
-	
 	public boolean getFeePaymentSuccess() {
-
 		return feePaymentSuccess;
 	}
 
