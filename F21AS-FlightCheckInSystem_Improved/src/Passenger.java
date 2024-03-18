@@ -76,8 +76,8 @@ public class Passenger {
 		return checkInSuccess;
 	}
 
-	public Boolean getFeePayment() {
-		return feePayment;
+	public boolean getFeePaymentSuccess() {
+		return feePaymentSuccess;
 	}
 	
     public String toString() {
