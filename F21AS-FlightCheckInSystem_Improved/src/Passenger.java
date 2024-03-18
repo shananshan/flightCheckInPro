@@ -18,7 +18,7 @@ public class Passenger {
         this.flightCode = flightCode;
         this.classType = classType;
         this.checkInSuccess = false; // Initialization set to incomplete boarding
-        this.feePayment = false; // Initialization set to unpaid baggage fees
+        this.feePaymentSuccess = false; // Initialization set to unpaid baggage fees
         this.luggageSize = generateLuggageSize();
         this.luggageWeight = generateLuggageWeight();
     }
