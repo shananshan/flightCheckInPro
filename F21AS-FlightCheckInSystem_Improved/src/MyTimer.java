@@ -30,7 +30,7 @@ public class MyTimer {
 
     private static void processPassengers(Queue<Passenger> passengerQueue) {
         while (!passengerQueue.isEmpty()) {
-            CheckInDesk.genrateEconomyDesk();
+            CheckInDesk.genrateEconomyDesk(passengerQueue);
             System.out.println("Processing check-in for passenger: " + passengerQueue.poll().getName());
         }
     }

@@ -1,3 +1,5 @@
+import javafx.util.converter.LocalTimeStringConverter;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,10 @@ public class Flight {
 	String flightCode;
 	String destination;
 	String carrier;
-	
+
+    static LocalTime flightTime = LocalTime.now();
+
+
     // List to store passengers on the flight.
     List<Passenger> passengerList;
     
@@ -43,7 +48,8 @@ public class Flight {
 
 	public static LocalTime getFlightTime() {
 		// TODO Auto-generated method stub
-		//航班的停止值机时间
-		return null;
+        flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
+
+        return flightTime;
 	}
 }

@@ -84,6 +84,8 @@ public class CheckInDesk {
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             desk1Vacancy = true;
         }
+        System.out.println("------------------------------------------");
+        System.out.println(pass);
         return economySecurityCheck;
     }
     
