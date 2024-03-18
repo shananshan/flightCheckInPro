@@ -12,10 +12,12 @@ public class Passenger {
 	Boolean feePaymentSuccess;	//payment success or not
    	String classType; // "Economy" or "Business"
 	public float fee;
-    
+
     //Constructor
-    public Passenger(String firstName, String flightCode, String classType) {
+    public Passenger(String name, String lastName, String firstName, String flightCode, String classType) {
+        this.name = name;
         this.firstName = firstName;
+        this.lastName = lastName;
         this.flightCode = flightCode;
         this.classType = classType;
         this.checkInSuccess = false; // Initialization set to incomplete boarding
@@ -31,9 +33,9 @@ public class Passenger {
         name = args[1] + " " + args[2];
         flightCode = args[3];
         checkInSuccess = Objects.equals(args[4], "TRUE");
-        feePaymentSuccess = Objects.equals(args[5], "TRUE");
-        classType = args[6];
-	fee = 0;
+        feePaymentSuccess = false;
+        classType = args[5];
+	    fee = 0;
     }
 
     //Randomly generated baggage volume: 125-512000
