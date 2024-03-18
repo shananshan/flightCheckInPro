@@ -48,6 +48,16 @@ public class Passenger {
         return false;
     }
 
+	public void setCheckInSuccess(boolean b) {
+		this.checkInSuccess = true; 
+		
+	}
+
+	public void setFeePaymentSuccess(boolean b) {
+		this.feePaymentSuccess = true;
+		
+	}
+	
 	public String getName() {
 		return name;
 	}
