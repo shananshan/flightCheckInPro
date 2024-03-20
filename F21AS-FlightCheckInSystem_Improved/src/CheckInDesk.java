@@ -2,6 +2,10 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class CheckInDesk {
     /*
@@ -16,8 +20,14 @@ public class CheckInDesk {
     // Queues for different check-in and security check processes
     static Queue<Passenger> economyCheckIn = new LinkedList<>();
     static Queue<Passenger> businessCheckIn= new LinkedList<>();
+    
     static Queue<Passenger> economySecurityCheck= new LinkedList<>();
     static Queue<Passenger> businessSecurityCheck= new LinkedList<>();
+    
+    static Queue<Passenger> economySecurityCheck1= new LinkedList<>();
+    static Queue<Passenger> economySecurityCheck2= new LinkedList<>();
+    static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
+
 
 	public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
 		for (Passenger passenger : passengerList) {
@@ -64,6 +74,20 @@ public class CheckInDesk {
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = Flight.getFlightTime();
         String warning = null;
+        
+        // Start timer to track if desk1Vacancy changes to true within 60 seconds
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!desk1Vacancy) {
+                    // If desk1Vacancy is still false after 60 seconds, set check-in success to false
+                    pass.setCheckInSuccess(false);
+                    desk1Vacancy = true;
+                    System.out.println("Check-in success set to false due to timeout.");
+                }
+            }
+        }, 60000); // 60 seconds
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
@@ -101,6 +125,20 @@ public class CheckInDesk {
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = Flight.getFlightTime();
         String warning = null;
+        
+        // Start timer to track if desk1Vacancy changes to true within 60 seconds
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!deskBVacancy) {
+                    // If desk1Vacancy is still false after 60 seconds, set check-in success to false
+                    pass.setCheckInSuccess(false);
+                    deskBVacancy = true;
+                    System.out.println("Check-in success set to false due to timeout.");
+                }
+            }
+        }, 60000); // 60 seconds
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
@@ -142,5 +180,57 @@ public class CheckInDesk {
     public static boolean checkAPassenger(Passenger p){
         // This method checks the state of a passenger and returns it.
         return p.state();
+    }
+    
+    public static void economySecurityCheck(Queue<Passenger> economySecurityCheck, Queue<Passenger> economySecurityCheck1, Queue<Passenger> economySecurityCheck2, Queue<Passenger> economySecurityCheck3 ) {
+    	Queue<Queue<Passenger>> queues = new ArrayBlockingQueue<>(3);
+        queues.add(economySecurityCheck1);
+        queues.add(economySecurityCheck2);
+        queues.add(economySecurityCheck3);
+
+        while (!economySecurityCheck.isEmpty()) {
+            Queue<Passenger> shortestQueue = getShortestQueue(queues);
+            Passenger passenger = economySecurityCheck.poll();
+            if (passenger != null) {
+                shortestQueue.add(passenger);
+                System.out.println("Passenger added to shortest queue: " + passenger);
+                sleep(5000); // 等待5秒
+            }
+        }
+    }
+
+    public static Queue<Passenger> getShortestQueue(Queue<Queue<Passenger>> queues) {
+        Queue<Passenger> shortestQueue = null;
+        int minLength = Integer.MAX_VALUE;
+        for (Queue<Passenger> queue : queues) {
+            int length = queue.size();
+            if (length < minLength) {
+                minLength = length;
+                shortestQueue = queue;
+            }
+        }
+        return shortestQueue;
+    }
+
+    public static void sleep(int milliseconds) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
+ // 启动定时任务，每六秒清除队首元素
+    public static void startTimer(Queue<Passenger> queue) {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (!queue.isEmpty()) {
+                    Passenger removedPassenger = queue.poll();
+                    System.out.println("Element removed from queue: " + removedPassenger);
+                }
+            }
+        }, 0, 6000);
     }
 }
