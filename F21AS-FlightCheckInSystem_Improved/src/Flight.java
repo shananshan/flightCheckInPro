@@ -1,5 +1,3 @@
-import javafx.util.converter.LocalTimeStringConverter;
-
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,32 +6,45 @@ public class Flight {
     // Attributes to store flight details.
     String flightNum; // Unique flight number.
     int numOfPassengers; // Current number of passengers on the flight.
-    static int maximumPassengers; // Maximum number of passengers 
+    int maximumPassengers; // Maximum number of passengers 
     double maximumBaggageWeight; // Maximum total weight of baggage 
     double maxbaggageVolume; // Maximum volume of baggage allowed per passenger.
     double extraVolumeFee; // Fee for each unit volume of baggage exceeding the maximum allowed.
     double extraWeightFee; // Fee for each unit weight of baggage exceeding the maximum allowed.
 
-    static double maxFlightVolume; // Maximum total volume of baggage allowed on the flight.
-    static double maxFlightWeight; // Maximum total weight of baggage allowed on the flight.
+    double maxFlightVolume; // Maximum total volume of baggage allowed on the flight.
+    double maxFlightWeight; // Maximum total weight of baggage allowed on the flight.
     
 	String flightCode;
 	String destination;
 	String carrier;
+	String TakeoffTime;
 
     static LocalTime flightTime = LocalTime.now();
 
 
     // List to store passengers on the flight.
     List<Passenger> passengerList;
+
     
-    public Flight(String[] data) {
-		// TODO Auto-generated constructor stub
+    Flight(String []data) {
         passengerList = new ArrayList<>();
         flightCode = data[0];
-        destination = data[2];
+        destination= data[2];
         carrier = data[3];
-	}
+
+        maximumPassengers = Integer.parseInt(data[4]);
+        maximumBaggageWeight = Double.parseDouble(data[6]);
+        maxbaggageVolume = Double.parseDouble(data[7]);
+
+        extraVolumeFee = Double.parseDouble(data[10]);
+        extraWeightFee = Double.parseDouble(data[8]);
+
+        maxFlightWeight = Double.parseDouble(data[11]);
+        maxFlightVolume = Double.parseDouble(data[12]);
+        TakeoffTime = data[13];
+        
+    }
 
 	public static float calulatefee(float dimension, float weight) {
         // calculate the extra fee...
@@ -45,11 +56,27 @@ public class Flight {
         // calculate the load percentage...
         return 0;
     }
+	
+	 public double getmaximumBaggageWeight() {
+		 return maxFlightWeight;
+		 
+	    }
+	 
+	 public double getmaxbaggageVolumet() {
+		  return maxFlightVolume;
+		 
+	       
+	    }
 
+	 
 	public static LocalTime getFlightTime() {
 		// TODO Auto-generated method stub
         flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
 
         return flightTime;
 	}
+	 public String toString() {
+	        return String.format(flightCode + " , " + destination + " , " + carrier + " , " + maximumPassengers + " , " + maximumBaggageWeight + " , " + maxbaggageVolume+" ,"
+	        		+ +extraVolumeFee+","+ extraWeightFee+" , "+maxFlightWeight+" , " +maxFlightVolume+" , "+TakeoffTime);
+	    }
 }
