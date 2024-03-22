@@ -44,6 +44,12 @@ public class ReadFiles {
     public List<Flight> getFlightList() {
         return flightList;
     }
-    
+     public Flight getFlight(String code) {
+        for(Flight f: flightList) {
+            if(Objects.equals(f.flightCode, code))
+                return f;
+        }
+        return null;
+    }
    
 }
