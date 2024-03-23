@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +17,7 @@ public class ReadFiles {
 	// declare instance variable as static to make it accessible across all instances of the class
     static List<Passenger> passengerList;
     static List<Flight> flightList;
+    static LocalTime flightTime = LocalTime.now();
 
 
     public void readPassengers(String csvFilePath) throws IOException {
@@ -45,12 +48,28 @@ public class ReadFiles {
     public List<Flight> getFlightList() {
         return flightList;
     }
-     public Flight getFlight(String code) {
+    public static Flight getFlight(String code) {
         for(Flight f: flightList) {
             if(Objects.equals(f.flightCode, code))
                 return f;
         }
         return null;
     }
+    public static LocalTime getFlightTime(String flightcode) {
+		// TODO Auto-generated method stub
+		Flight f  = getFlight(flightcode);
+//		System.out.println(f.flightCode);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+	    LocalTime takeOffTime = LocalTime.parse(f.TakeoffTime, formatter);
+	    // 现在可以从takeOffTime获取小时、分钟和秒了
+	    int h = takeOffTime.getHour();
+	    int m = takeOffTime.getMinute();
+	    int s = takeOffTime.getSecond();
+//	    flightTime = LocalTime.of(h, m, s);
+	    flightTime = flightTime.withHour(h).withMinute(m).withSecond(s);
+//        flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
+        return flightTime;
+	}
+    
    
 }
