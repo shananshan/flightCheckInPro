@@ -69,10 +69,19 @@ public class Flight {
 	    }
 
 	 
-	public static LocalTime getFlightTime() {
+	public static LocalTime getFlightTime(String flightNumber) {
 		// TODO Auto-generated method stub
-        flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
-
+		Flight f  = fcs.getFlight(flightNumber);
+		System.out.println(f.flightCode);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+	    LocalTime takeOffTime = LocalTime.parse(f.TakeoffTime, formatter);
+	    // 现在可以从takeOffTime获取小时、分钟和秒了
+	    int h = takeOffTime.getHour();
+	    int m = takeOffTime.getMinute();
+	    int s = takeOffTime.getSecond();
+//	    flightTime = LocalTime.of(h, m, s);
+	    flightTime = flightTime.withHour(h).withMinute(m).withSecond(s);
+//        flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
         return flightTime;
 	}
 	 public String toString() {
