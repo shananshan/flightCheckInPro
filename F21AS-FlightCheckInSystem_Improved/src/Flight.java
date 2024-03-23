@@ -1,4 +1,5 @@
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class Flight {
 	String TakeoffTime;
 
     static LocalTime flightTime = LocalTime.now();
+
+    static ReadFiles fcs = new ReadFiles();
 
 
     // List to store passengers on the flight.
