@@ -1,13 +1,14 @@
 import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class CheckInDesk {
+public class CheckInDesk implements Runnable{
     /*
     This class is used to simulate check-in process
     need a queue, include the waiting passengers' info: name, booking code, flight code, luggage[dimension, weight], state
@@ -20,14 +21,12 @@ public class CheckInDesk {
     // Queues for different check-in and security check processes
     static Queue<Passenger> economyCheckIn = new LinkedList<>();
     static Queue<Passenger> businessCheckIn= new LinkedList<>();
-    
     static Queue<Passenger> economySecurityCheck= new LinkedList<>();
     static Queue<Passenger> businessSecurityCheck= new LinkedList<>();
-    
+
     static Queue<Passenger> economySecurityCheck1= new LinkedList<>();
     static Queue<Passenger> economySecurityCheck2= new LinkedList<>();
     static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
-
 
 	public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
 		for (Passenger passenger : passengerList) {
@@ -39,42 +38,19 @@ public class CheckInDesk {
 		}
 	}
 
-	public static void closeDesk() {
-		// close the desk after take off
-	}
-
-
-	public int deskNum(){
-        int desknum = 1;
-        desknum += 1;
-        return desknum;
-    }
-
-    public boolean gatState(boolean state){
-        boolean checkornot = state;
-        return checkornot;
-    }
-
-    public void baggage(Passenger p){
-        float dimension = p.luggageSize;
-        float weight = p.luggageWeight;
-        float fee = Flight.calulatefee(dimension,weight);
-
-    }
-
  /**
      * Generates check-in for economy class passengers.
      * @return Warning message if any.
      */
-    public static Queue<Passenger> genrateEconomyDesk(Queue<Passenger> economyCheckIn){
+    public static Queue<Passenger> generateEconomyDesk(Queue<Passenger> economyCheckIn, List<Flight> flightList){
         // Removes a passenger from the economy check-in queue and processes their check-in.
-        Passenger pass = economyCheckIn.remove();
+        Passenger pass = economyCheckIn.poll();
         desk1Vacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = Flight.getFlightTime();
         String warning = null;
-        
+
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -117,15 +93,15 @@ public class CheckInDesk {
      * Generates check-in for business class passengers.
      * @return Warning message if any.
      */
-    public static Queue<Passenger> genrateBussinessDesk(Queue<Passenger> businessCheckIn){
+    public static Queue<Passenger> generateBusinessDesk(Queue<Passenger> businessCheckIn, List<Flight> flightList){
         // Removes a passenger from the business check-in queue and processes their check-in.
-        Passenger pass = businessCheckIn.remove();
+        Passenger pass = businessCheckIn.poll();
         deskBVacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = Flight.getFlightTime();
         String warning = null;
-        
+
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -159,6 +135,7 @@ public class CheckInDesk {
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
+        System.out.println(pass);
         return businessSecurityCheck;
     }
 
@@ -181,7 +158,17 @@ public class CheckInDesk {
         // This method checks the state of a passenger and returns it.
         return p.state();
     }
-    
+
+    public static Flight getFlight(Passenger p, List<Flight> flightList) {
+        String code = p.flightCode;
+        Flight f1 = null;
+        for(Flight f: flightList) {
+            if (Objects.equals(f.flightCode, code))
+                f1 = f;
+        }
+        return f1;
+    }
+
     public static void economySecurityCheck(Queue<Passenger> economySecurityCheck, Queue<Passenger> economySecurityCheck1, Queue<Passenger> economySecurityCheck2, Queue<Passenger> economySecurityCheck3 ) {
     	Queue<Queue<Passenger>> queues = new ArrayBlockingQueue<>(3);
         queues.add(economySecurityCheck1);
@@ -219,7 +206,7 @@ public class CheckInDesk {
             e.printStackTrace();
         }
     }
-    
+
  // 启动定时任务，每六秒清除队首元素
     public static void startTimer(Queue<Passenger> queue) {
         Timer timer = new Timer();
@@ -233,4 +220,35 @@ public class CheckInDesk {
             }
         }, 0, 6000);
     }
+
+    public CheckInDesk(Queue<Passenger> economyCheckIn, Queue<Passenger> businessCheckIn, List<Flight> flightList) {
+        this.economyCheckIn = economyCheckIn;
+        this.businessCheckIn = businessCheckIn;
+//        this.flightList = flightList;
+    }
+
+    @Override
+    public void run() {
+        while (!economyCheckIn.isEmpty()) {
+            generateEconomyDesk(economyCheckIn, ReadFiles.flightList);
+//            int rest = economySecurityCheck.size();
+//            System.out.println("Processed "+rest +" passengers from the economy check-in queue.");
+            System.out.println(economySecurityCheck.size());
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        while (!businessCheckIn.isEmpty()) {
+            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
+            System.out.println(businessSecurityCheck.size());
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
 }
