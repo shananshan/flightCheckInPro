@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Flight {
     // Attributes to store flight details.
-    String flightNum; // Unique flight number.
+//    String flightNum; // Unique flight number.
     int numOfPassengers; // Current number of passengers on the flight.
     int maximumPassengers; // Maximum number of passengers 
     double maximumBaggageWeight; // Maximum total weight of baggage 
@@ -21,9 +21,8 @@ public class Flight {
 	String carrier;
 	String TakeoffTime;
 
-    static LocalTime flightTime = LocalTime.now();
-
-    static ReadFiles fcs = new ReadFiles();
+//   static LocalTime flightTime = LocalTime.now();
+//    ReadFiles fcs = new ReadFiles();
 
 
     // List to store passengers on the flight.
@@ -67,26 +66,12 @@ public class Flight {
 	 
 	 public double getmaxbaggageVolumet() {
 		  return maxFlightVolume;
-		 
-	       
 	    }
-
-	 
-	public static LocalTime getFlightTime(String flightNumber) {
-		// TODO Auto-generated method stub
-		Flight f  = fcs.getFlight(flightNumber);
-		System.out.println(f.flightCode);
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-	    LocalTime takeOffTime = LocalTime.parse(f.TakeoffTime, formatter);
-	    // 现在可以从takeOffTime获取小时、分钟和秒了
-	    int h = takeOffTime.getHour();
-	    int m = takeOffTime.getMinute();
-	    int s = takeOffTime.getSecond();
-//	    flightTime = LocalTime.of(h, m, s);
-	    flightTime = flightTime.withHour(h).withMinute(m).withSecond(s);
-//        flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
-        return flightTime;
-	}
+	 public String gettakeoftime() {
+		  return TakeoffTime;
+	    }
+	
+	
 	 public String toString() {
 	        return String.format(flightCode + " , " + destination + " , " + carrier + " , " + maximumPassengers + " , " + maximumBaggageWeight + " , " + maxbaggageVolume+" ,"
 	        		+ +extraVolumeFee+","+ extraWeightFee+" , "+maxFlightWeight+" , " +maxFlightVolume+" , "+TakeoffTime);
