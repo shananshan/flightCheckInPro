@@ -48,7 +48,7 @@ public class CheckInDesk implements Runnable{
         desk1Vacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = Flight.getFlightTime(pass.flightCode);
+        LocalTime flightTime = ReadFiles.getFlightTime(pass.flightCode);
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -99,7 +99,7 @@ public class CheckInDesk implements Runnable{
         deskBVacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = Flight.getFlightTime(pass.flightCode);
+        LocalTime flightTime = ReadFiles.getFlightTime(pass.flightCode);
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -135,6 +135,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println(pass);
         return businessSecurityCheck;
     }
@@ -230,25 +231,26 @@ public class CheckInDesk implements Runnable{
     @Override
     public void run() {
         while (!economyCheckIn.isEmpty()) {
+            while (!businessCheckIn.isEmpty()) {
+            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
+            System.out.println(businessSecurityCheck.size());
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             generateEconomyDesk(economyCheckIn, ReadFiles.flightList);
 //            int rest = economySecurityCheck.size();
 //            System.out.println("Processed "+rest +" passengers from the economy check-in queue.");
             System.out.println(economySecurityCheck.size());
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        while (!businessCheckIn.isEmpty()) {
-            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
-            System.out.println(businessSecurityCheck.size());
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+
     }
 
 }
