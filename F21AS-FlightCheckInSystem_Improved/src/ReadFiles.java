@@ -48,28 +48,31 @@ public class ReadFiles {
     public List<Flight> getFlightList() {
         return flightList;
     }
-    public static Flight getFlight(String code) {
+
+    public static Flight getFlight(List<Flight> flightList,String code) {
+        Flight f1 = null ;
         for(Flight f: flightList) {
             if(Objects.equals(f.flightCode, code))
-                return f;
+                f1 = f;
         }
-        return null;
+        return f1;
     }
-    public static LocalTime getFlightTime(String flightcode) {
-		// TODO Auto-generated method stub
-		Flight f  = getFlight(flightcode);
+
+    public static LocalTime getFlightTime(List<Flight> flightList,String flightcode) {
+        // TODO Auto-generated method stub
+        Flight f = getFlight(flightList,flightcode);
 //		System.out.println(f.flightCode);
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-	    LocalTime takeOffTime = LocalTime.parse(f.TakeoffTime, formatter);
-	    // 现在可以从takeOffTime获取小时、分钟和秒了
-	    int h = takeOffTime.getHour();
-	    int m = takeOffTime.getMinute();
-	    int s = takeOffTime.getSecond();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalTime takeOffTime = LocalTime.parse(f.TakeoffTime, formatter);
+        // 现在可以从takeOffTime获取小时、分钟和秒了
+        int h = takeOffTime.getHour();
+        int m = takeOffTime.getMinute();
+        int s = takeOffTime.getSecond();
 //	    flightTime = LocalTime.of(h, m, s);
-	    flightTime = flightTime.withHour(h).withMinute(m).withSecond(s);
+        flightTime = flightTime.withHour(h).withMinute(m).withSecond(s);
 //        flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
         return flightTime;
-	}
+    }
     
    
 }

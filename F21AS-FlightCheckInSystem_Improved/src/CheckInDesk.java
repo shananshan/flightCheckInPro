@@ -14,9 +14,9 @@ public class CheckInDesk implements Runnable{
     need a queue, include the waiting passengers' info: name, booking code, flight code, luggage[dimension, weight], state
     is one of the thread
      */
-	// Vacancy status of check-in desks
-    private static boolean desk1Vacancy = true;		//economy
-    private static boolean deskBVacancy = true;		//business
+    // Vacancy status of check-in desks
+    private static boolean desk1Vacancy = true;        //economy
+    private static boolean deskBVacancy = true;        //business
     
     // Queues for different check-in and security check processes
     static Queue<Passenger> economyCheckIn = new LinkedList<>();
@@ -28,16 +28,19 @@ public class CheckInDesk implements Runnable{
     static Queue<Passenger> economySecurityCheck2= new LinkedList<>();
     static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
     static ReadFiles fcs = new ReadFiles();
+    private final Queue<Passenger> passQueue;
+    private final List<Flight> flightList;
+//    private List<Flight> flightList = fcs.getFlightList();
 
-	public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
-		for (Passenger passenger : passengerList) {
-			if (passenger.classType.equals("1")) {
-				economy.offer(passenger);
-			} else if (passenger.classType.equals("0")) {
-				business.offer(passenger);
-			}
-		}
-	}
+    public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
+        for (Passenger passenger : passengerList) {
+            if (passenger.classType.equals("1")) {
+                economy.offer(passenger);
+            } else if (passenger.classType.equals("0")) {
+                business.offer(passenger);
+            }
+        }
+    }
 
  /**
      * Generates check-in for economy class passengers.
@@ -49,7 +52,7 @@ public class CheckInDesk implements Runnable{
         desk1Vacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = fcs.getFlightTime(pass.flightCode);
+        LocalTime flightTime = fcs.getFlightTime(flightList,pass.flightCode);
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -100,7 +103,7 @@ public class CheckInDesk implements Runnable{
         deskBVacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = fcs.getFlightTime(pass.flightCode);
+        LocalTime flightTime = fcs.getFlightTime(fcs.getFlightList(),pass.flightCode);
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -138,6 +141,7 @@ public class CheckInDesk implements Runnable{
         }
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println(pass);
+        Logger.getInstance().log(pass.name);
         return businessSecurityCheck;
     }
 
@@ -161,18 +165,8 @@ public class CheckInDesk implements Runnable{
         return p.state();
     }
 
-    public static Flight getFlight(Passenger p, List<Flight> flightList) {
-        String code = p.flightCode;
-        Flight f1 = null;
-        for(Flight f: flightList) {
-            if (Objects.equals(f.flightCode, code))
-                f1 = f;
-        }
-        return f1;
-    }
-
     public static void economySecurityCheck(Queue<Passenger> economySecurityCheck, Queue<Passenger> economySecurityCheck1, Queue<Passenger> economySecurityCheck2, Queue<Passenger> economySecurityCheck3 ) {
-    	Queue<Queue<Passenger>> queues = new ArrayBlockingQueue<>(3);
+        Queue<Queue<Passenger>> queues = new ArrayBlockingQueue<>(3);
         queues.add(economySecurityCheck1);
         queues.add(economySecurityCheck2);
         queues.add(economySecurityCheck3);
@@ -223,25 +217,26 @@ public class CheckInDesk implements Runnable{
         }, 0, 6000);
     }
 
-    public CheckInDesk(Queue<Passenger> economyCheckIn, Queue<Passenger> businessCheckIn, List<Flight> flightList) {
-        this.economyCheckIn = economyCheckIn;
+    public CheckInDesk(Queue<Passenger> passQueue, List<Flight> flightList) {
+        this.passQueue = passQueue;
         this.businessCheckIn = businessCheckIn;
+        this.flightList = flightList;
 //        this.flightList = flightList;
     }
 
     @Override
     public void run() {
-        while (!economyCheckIn.isEmpty()) {
-            while (!businessCheckIn.isEmpty()) {
-            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
-            System.out.println(businessSecurityCheck.size());
-                try {
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            generateEconomyDesk(economyCheckIn, ReadFiles.flightList);
+        while (!passQueue.isEmpty()) {
+//            while (!businessCheckIn.isEmpty()) {
+//            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
+//            System.out.println(businessSecurityCheck.size());
+//                try {
+//                    TimeUnit.SECONDS.sleep(2);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+            generateEconomyDesk(passQueue, flightList);
 //            int rest = economySecurityCheck.size();
 //            System.out.println("Processed "+rest +" passengers from the economy check-in queue.");
             System.out.println(economySecurityCheck.size());

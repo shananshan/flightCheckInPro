@@ -20,6 +20,7 @@ public class ThreadTest {
         fcs.readFlights("Flight Detail.csv");
         passengerList = fcs.getPassengerList();
         flightList = fcs.getFlightList();
+        System.out.println(flightList);
 
         // Separate passengers by class type
         CheckInDesk.separatePassengersByClassType(passengerList, classType0, classType1);
@@ -27,15 +28,18 @@ public class ThreadTest {
         System.out.println("Class Type 1 Queue:"+classType1.size());
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
+
         // Create check-in desks
-        executor.execute(new CheckInDesk(classType0,classType1,flightList));
-//        executor.execute(new CheckInDesk(classType0,classType1,flightList));
-//        executor.execute(new CheckInDesk(classType0,classType1,flightList));
+        executor.execute(new CheckInDesk(classType0,flightList));
+        executor.execute(new CheckInDesk(classType0,flightList));
+        executor.execute(new CheckInDesk(classType1,flightList));
 
         // Create security desks
 //        executor.execute(new );
 
         // Shutdown the executor
+//        executor1.shutdown();
+//        executor2.shutdown();
         executor.shutdown();
     }
 }

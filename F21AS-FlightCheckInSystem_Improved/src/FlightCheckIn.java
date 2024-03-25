@@ -45,13 +45,13 @@ import java.util.Objects;
 	    }
 	    
 	    public double getWeightHold(String flightNumber) {
-	    	Flight f  = fcs.getFlight(flightNumber);
+	    	Flight f  = fcs.getFlight(fcs.getFlightList(),flightNumber);
 	    	
 	    	weighthold  = (totalWeight / f.getmaximumBaggageWeight() ) * 100;
 	        return weighthold;
 	    }
 	    public double getSizeHold(String flightNumber) {
-	    	Flight f  = fcs.getFlight(flightNumber);
+	    	Flight f  = fcs.getFlight(fcs.getFlightList(),flightNumber);
 //	    	System.out.print(f);
 	    	sizehold  = (totalVolume / f.getmaximumBaggageWeight()) * 100;
 	        return sizehold;
