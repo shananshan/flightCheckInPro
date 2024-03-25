@@ -27,6 +27,7 @@ public class CheckInDesk implements Runnable{
     static Queue<Passenger> economySecurityCheck1= new LinkedList<>();
     static Queue<Passenger> economySecurityCheck2= new LinkedList<>();
     static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
+    static ReadFiles fcs = new ReadFiles();
 
 	public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
 		for (Passenger passenger : passengerList) {
@@ -48,7 +49,7 @@ public class CheckInDesk implements Runnable{
         desk1Vacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = ReadFiles.getFlightTime(pass.flightCode);
+        LocalTime flightTime = fcs.getFlightTime(pass.flightCode);
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -99,7 +100,7 @@ public class CheckInDesk implements Runnable{
         deskBVacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = ReadFiles.getFlightTime(pass.flightCode);
+        LocalTime flightTime = fcs.getFlightTime(pass.flightCode);
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -250,7 +251,6 @@ public class CheckInDesk implements Runnable{
                 throw new RuntimeException(e);
             }
         }
-
     }
 
 }
