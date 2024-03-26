@@ -11,6 +11,7 @@ public class Passenger {
 	Boolean checkInSuccess;
 	Boolean feePaymentSuccess;	//payment success or not
    	String classType; // "Economy" or "Business"
+	String luggageDimensions;
 	public float fee;
 
     //Constructor
@@ -23,18 +24,22 @@ public class Passenger {
         feePaymentSuccess = false;
         classType = args[5];
 	fee = 0;
-        luggageSize = generateLuggageSize();
+        generateLuggageSize();
         luggageWeight = generateLuggageWeight();
     }
 
-    private int generateLuggageSize() {
+    private void generateLuggageSize() {
         Random random = new Random();
         int length = 5 + random.nextInt(96); // 5-100
 	int width = 5 + random.nextInt(96);
 	int height = 5 + random.nextInt(96);
-        return length * width * height; 
+		luggageSize = length * width * height;
+		luggageDimensions = length + " cm x " + width + " cm x " + height + " cm";
     }
 
+	public String getLuggageDimensions() {
+		return luggageDimensions;
+	}
     // Randomly generated baggage weight: 5 - 50 kilograms
     private float generateLuggageWeight() {
         return 5f + new Random().nextFloat() * (50f - 5f); // 
@@ -90,9 +95,10 @@ public class Passenger {
 		this.feePaymentSuccess = true;
 		
 	}
-	
-    public String toString() {
-        return String.format(name + " , " + flightCode + " , " + luggageSize + " , " + luggageWeight + " , " + classType + " , " + (checkInSuccess ? "True" : "False")+" , "+fee);
-    }
- 
+
+	public String toString() {
+		return String.format(name + " , " + flightCode + " , " + luggageDimensions + " , " + luggageWeight + " , " + classType + " , " + (checkInSuccess ? "True" : "False")+" , "+fee);
+	}
+
+
 }
