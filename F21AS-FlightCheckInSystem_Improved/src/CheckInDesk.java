@@ -29,7 +29,11 @@ public class CheckInDesk implements Runnable{
     static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
     static ReadFiles fcs = new ReadFiles();
     private final Queue<Passenger> passQueue;
-    private final List<Flight> flightList;
+    private static List<Flight> flightList = fcs.getFlightList();
+    
+    static List<Flight> flightOnTime = flightList;
+    static List<Flight> flightLate = null;
+    static String flightLate1 = "Flight Late: ";
 //    private List<Flight> flightList = fcs.getFlightList();
 
     public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
@@ -41,6 +45,23 @@ public class CheckInDesk implements Runnable{
             }
         }
     }
+    
+    
+    public static String checkFlightOnTime(List<Flight> flightOnTime){
+    	for(Flight flight:flightOnTime) {
+    		LocalTime time = LocalTime.now(); // Current time
+            time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+    		LocalTime flightTime =fcs.getFlightTime(flightOnTime,flight.flightCode);
+    		if(flightTime.isBefore(time)) {
+    			flightOnTime.remove(flight);
+    			flightLate.add(flight);
+    			flightLate1 = flightLate1 + ", " + flight.flightCode;
+    		}
+    		
+    	}
+		return flightLate1;
+    }
+    
 
  /**
      * Generates check-in for economy class passengers.
@@ -177,7 +198,7 @@ public class CheckInDesk implements Runnable{
             if (passenger != null) {
                 shortestQueue.add(passenger);
                 System.out.println("Passenger added to shortest queue: " + passenger);
-                sleep(5000); // 等待5秒
+                sleep(5000); // 绛夊緟5绉�
             }
         }
     }
@@ -203,7 +224,7 @@ public class CheckInDesk implements Runnable{
         }
     }
 
- // 启动定时任务，每六秒清除队首元素
+ // 鍚姩瀹氭椂浠诲姟锛屾瘡鍏娓呴櫎闃熼鍏冪礌
     public static void startTimer(Queue<Passenger> queue) {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
