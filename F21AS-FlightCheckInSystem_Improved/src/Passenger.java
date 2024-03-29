@@ -20,10 +20,11 @@ public class Passenger {
     	lastName = args[2];
         name = args[1] + " " + args[2];
         flightCode = args[3];
-        checkInSuccess = Objects.equals(args[4], "TRUE");
-        feePaymentSuccess = false;
+//        checkInSuccess = Objects.equals(args[4], "TRUE");
+		checkInSuccess = false;
+		feePaymentSuccess = false;
         classType = args[5];
-	fee = 0;
+		fee = 0;
         generateLuggageSize();
         luggageWeight = generateLuggageWeight();
     }

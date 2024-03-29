@@ -29,11 +29,16 @@ public class CheckInDesk implements Runnable{
     static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
     static ReadFiles fcs = new ReadFiles();
     private final Queue<Passenger> passQueue;
-    private static List<Flight> flightList = fcs.getFlightList();
-    
+    private static List<Flight> flightList;
+
+//    private static List<Flight> flightList = fcs.getFlightList();
+
     static List<Flight> flightOnTime = flightList;
     static List<Flight> flightLate = null;
     static String flightLate1 = "Flight Late: ";
+//    private Queue<Passenger> passQueue;
+//    private List<Flight> flightList;
+//    private Queue<Passenger> sQueue;
 //    private List<Flight> flightList = fcs.getFlightList();
 
     public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
@@ -45,8 +50,8 @@ public class CheckInDesk implements Runnable{
             }
         }
     }
-    
-    
+
+
     public static String checkFlightOnTime(List<Flight> flightOnTime){
     	for(Flight flight:flightOnTime) {
     		LocalTime time = LocalTime.now(); // Current time
@@ -57,11 +62,11 @@ public class CheckInDesk implements Runnable{
     			flightLate.add(flight);
     			flightLate1 = flightLate1 + ", " + flight.flightCode;
     		}
-    		
+
     	}
 		return flightLate1;
     }
-    
+
 
  /**
      * Generates check-in for economy class passengers.
@@ -124,7 +129,7 @@ public class CheckInDesk implements Runnable{
         deskBVacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = fcs.getFlightTime(fcs.getFlightList(),pass.flightCode);
+        LocalTime flightTime = fcs.getFlightTime(flightList,pass.flightCode);
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -198,7 +203,7 @@ public class CheckInDesk implements Runnable{
             if (passenger != null) {
                 shortestQueue.add(passenger);
                 System.out.println("Passenger added to shortest queue: " + passenger);
-                sleep(5000); // 绛夊緟5绉�
+                sleep(5000); // 等待5秒
             }
         }
     }
@@ -224,7 +229,7 @@ public class CheckInDesk implements Runnable{
         }
     }
 
- // 鍚姩瀹氭椂浠诲姟锛屾瘡鍏娓呴櫎闃熼鍏冪礌
+ // 启动定时任务，每六秒清除队首元素
     public static void startTimer(Queue<Passenger> queue) {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -242,11 +247,13 @@ public class CheckInDesk implements Runnable{
         this.passQueue = passQueue;
         this.businessCheckIn = businessCheckIn;
         this.flightList = flightList;
+//        this.sQueue = sQueue;
 //        this.flightList = flightList;
     }
 
     @Override
     public void run() {
+//       public Queue<Passenger> ..
         while (!passQueue.isEmpty()) {
 //            while (!businessCheckIn.isEmpty()) {
 //            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
@@ -257,12 +264,19 @@ public class CheckInDesk implements Runnable{
 //                    throw new RuntimeException(e);
 //                }
 //            }
-            generateEconomyDesk(passQueue, flightList);
-//            int rest = economySecurityCheck.size();
-//            System.out.println("Processed "+rest +" passengers from the economy check-in queue.");
-            System.out.println(economySecurityCheck.size());
+            try {
+//                sQueue = generateEconomyDesk(passQueue, flightList);
+                generateEconomyDesk(passQueue, flightList);
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(economySecurityCheck.size());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if(passQueue.isEmpty()){
             try {
                 TimeUnit.SECONDS.sleep(1);
+                System.out.println("Wait for passengers...");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
