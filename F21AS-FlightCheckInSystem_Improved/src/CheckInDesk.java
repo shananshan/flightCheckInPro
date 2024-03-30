@@ -129,7 +129,7 @@ public class CheckInDesk implements Runnable{
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
-                float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
+                float fee = matchingFlight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
@@ -181,7 +181,7 @@ public class CheckInDesk implements Runnable{
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
-                float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
+                float fee = matchingFlight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
