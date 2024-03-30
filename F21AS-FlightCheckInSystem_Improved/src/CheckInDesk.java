@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -41,6 +42,8 @@ public class CheckInDesk implements Runnable{
     static List<Flight> flightOnTime = flightList;
     static List<Flight> flightLate = null;
     static String flightLate1 = "Flight Late: ";
+    
+    Random rand = new Random();
 //    private Queue<Passenger> passQueue;
 //    private List<Flight> flightList;
 //    private Queue<Passenger> sQueue;
@@ -83,7 +86,7 @@ public class CheckInDesk implements Runnable{
         desk1Vacancy = false;
 //        LocalTime time = LocalTime.now(); // Current time
 //        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        System.out.println(time);
+//        System.out.println(time);
 //		time = time.plusSeconds(20);
 
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
@@ -102,8 +105,8 @@ public class CheckInDesk implements Runnable{
                 }
             }
         }, 60000); // 60 seconds
-        System.out.println("aaaaaaaaa" + time);
-        System.out.println(flightTime);
+//        System.out.println("aaaaaaaaa" + time);
+//        System.out.println(flightTime);
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
@@ -125,7 +128,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             desk1Vacancy = true;
         }
-        System.out.println(warning);
+//       System.out.println(warning);
         System.out.println(pass);
         return economySecurityCheck;
     }
@@ -176,7 +179,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
+//        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println(pass);
         Logger.getInstance().log(pass.name);
         return businessSecurityCheck;
@@ -286,8 +289,8 @@ public class CheckInDesk implements Runnable{
             try {
 //                sQueue = generateEconomyDesk(passQueue, flightList);
                 generateEconomyDesk(passQueue, flightList);
-                TimeUnit.SECONDS.sleep(10);
-               System.out.println(economySecurityCheck.size());
+                TimeUnit.SECONDS.sleep(rand.nextInt(10)+ 0);
+//               System.out.println(economySecurityCheck.size());
                System.out.println("Desk e1 is processing: " + ThreadTest.deske1.getCurrentPassenger());
                System.out.println("Desk e2 is processing: " + ThreadTest.deske2.getCurrentPassenger());
                System.out.println("Desk b is processing: " + ThreadTest.deskb.getCurrentPassenger());
@@ -297,7 +300,7 @@ public class CheckInDesk implements Runnable{
         }
         if(passQueue.isEmpty()){
             try {
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(1);
                 System.out.println("Wait for passengers...");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
