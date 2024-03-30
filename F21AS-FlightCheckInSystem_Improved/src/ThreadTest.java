@@ -3,7 +3,6 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class ThreadTest {
 
@@ -16,6 +15,7 @@ public class ThreadTest {
 
         List<Passenger> passengerList;
         List<Flight> flightList;
+        Queue<Passenger> useless = null;
         Queue<Passenger> eClass = new LinkedList<>();
         Queue<Passenger> bClass = new LinkedList<>();
         Queue<Passenger> eSecurityCheck = new LinkedList<>();
@@ -36,39 +36,14 @@ public class ThreadTest {
         ExecutorService executor = Executors.newFixedThreadPool(3);
 
         // Create check-in desks
-        deske1 = new CheckInDesk(eClass,null,flightList);
-        deske2 = new CheckInDesk(eClass,null,flightList);
-        deskb = new CheckInDesk(null,bClass,flightList);
+        deske1 = new CheckInDesk(1,bClass,eClass,flightList);
+        deske2 = new CheckInDesk(1,bClass,eClass,flightList);
+        deskb = new CheckInDesk(0,bClass,eClass,flightList);
 
         executor.execute(deske1);
         executor.execute(deske2);
         executor.execute(deskb);
 
-
-
-//        ExecutorService executor = Executors.newFixedThreadPool(3);
-
-        // 将乘客分类和初始化检票柜台的任务提交到线程池中
-//        Runnable initializeDesksTask = () -> {
-//            Queue<Passenger> eClass = new LinkedList<>();
-//            Queue<Passenger> bClass = new LinkedList<>();
-//            // Separate passengers by class type
-//            CheckInDesk.separatePassengersByClassType(passengerList, eClass, bClass);
-//            System.out.println("Class Type 0 Queue:" + eClass.size());
-//            System.out.println("Class Type 1 Queue:" + bClass.size());
-//
-//            // 创建检票柜台任务并提交到线程池中
-//            executor.execute(new CheckInDesk(eClass, flightList));
-//            executor.execute(new CheckInDesk(eClass, flightList));
-//            executor.execute(new CheckInDesk(bClass, flightList));
-//        };
-//        executor.execute(initializeDesksTask);
-        // Create security desks
-//        executor.execute(new );
-
-        // Shutdown the executor
-//        executor1.shutdown();
-//        executor2.shutdown();
         executor.shutdown();
     }
 }

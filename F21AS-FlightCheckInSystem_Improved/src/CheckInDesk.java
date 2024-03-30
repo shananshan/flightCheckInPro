@@ -31,7 +31,8 @@ public class CheckInDesk implements Runnable{
     static ReadFiles fcs = new ReadFiles();
     //private final Queue<Passenger> passQueue;
     private static List<Flight> flightList;
-    
+    private final int flag;
+
     //public static Passenger thisPass;
     private volatile Passenger currentPassenger; // 当前正在处理的乘客
 
@@ -95,9 +96,10 @@ public class CheckInDesk implements Runnable{
      * Generates check-in for economy class passengers.
      * @return Warning message if any.
      */
-    public Queue<Passenger> generateEconomyDesk(Queue<Passenger> economyCheckIn, List<Flight> flightList){
+    public Queue<Passenger> generateEconomyDesk(Passenger economyCheckIn, List<Flight> flightList){
         // Removes a passenger from the economy check-in queue and processes their check-in.
-        Passenger pass = economyCheckIn.poll();
+//        Passenger pass = economyCheckIn.poll();
+        Passenger pass = economyCheckIn;
         desk1Vacancy = false;
 //        LocalTime time = LocalTime.now(); // Current time
 //        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
@@ -121,8 +123,6 @@ public class CheckInDesk implements Runnable{
                 }
             }
         }, 60000); // 60 seconds
-//        System.out.println("aaaaaaaaa" + time);
-//        System.out.println(flightTime);
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (matchingFlight != null && !pass.getFeePaymentSuccess()) {
@@ -144,7 +144,7 @@ public class CheckInDesk implements Runnable{
             desk1Vacancy = true;
         }
 //        System.out.println(warning);
-        System.out.println(pass);
+//        System.out.println(pass);
         return economySecurityCheck;
     }
     
@@ -152,9 +152,10 @@ public class CheckInDesk implements Runnable{
      * Generates check-in for business class passengers.
      * @return Warning message if any.
      */
-    public Queue<Passenger> generateBusinessDesk(Queue<Passenger> businessCheckIn, List<Flight> flightList){
+    public Queue<Passenger> generateBusinessDesk(Passenger businessCheckIn, List<Flight> flightList){
         // Removes a passenger from the business check-in queue and processes their check-in.
-        Passenger pass = businessCheckIn.poll();
+//        Passenger pass = businessCheckIn.poll();
+        Passenger pass = businessCheckIn;
         deskBVacancy = false;
 //        LocalTime time = LocalTime.now(); // Current time
 //        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
@@ -195,8 +196,8 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(pass);
+//        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
+//        System.out.println(pass);
         Logger.getInstance().log(pass.name);
         return businessSecurityCheck;
     }
@@ -273,12 +274,11 @@ public class CheckInDesk implements Runnable{
         }, 0, 6000);
     }
 
-    public CheckInDesk(Queue<Passenger> businessCheckIn, Queue<Passenger> economyCheckIn,List<Flight> flightList) {
-//        this.passQueue = passQueue;
+    public CheckInDesk(int flag,Queue<Passenger> businessCheckIn, Queue<Passenger> economyCheckIn,List<Flight> flightList) {
+        this.flag = flag;
         this.businessCheckIn = businessCheckIn;
         this.economyCheckIn = economyCheckIn;
         this.flightList = flightList;
-//        this.sQueue = sQueue;
 //        this.flightList = flightList;
     }
 
@@ -289,46 +289,43 @@ public class CheckInDesk implements Runnable{
     @Override
     public void run() {
 //       public Queue<Passenger> ..
-        while (!economyCheckIn.isEmpty()) {
+        while(true) {
+            if (flag == 1) {
+                synchronized (this) {
+                    currentPassenger = economyCheckIn.poll();
+                }
+                try {
+                    generateEconomyDesk(currentPassenger, flightList);
+//                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
+                    TimeUnit.SECONDS.sleep(1);//为了测试先用了固定时间
+                    System.out.println("Desk e is processing: " + currentPassenger);
+                    System.out.println("Size of E waiting for security check is "+economySecurityCheck.size());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
-        	synchronized (this) {
-                currentPassenger = economyCheckIn.poll();
             }
-//            while (!businessCheckIn.isEmpty()) {
-//            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
-//            System.out.println(businessSecurityCheck.size());
-//                try {
-//                    TimeUnit.SECONDS.sleep(2);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-            try {
-                generateEconomyDesk(economyCheckIn, flightList);
-                TimeUnit.SECONDS.sleep(rand.nextInt(10)+ 0);
-//               System.out.println(economySecurityCheck.size());
-                System.out.println("Desk e1 is processing: " + ThreadTest.deske1.getCurrentPassenger());
-                System.out.println("Desk e2 is processing: " + ThreadTest.deske2.getCurrentPassenger());
-                System.out.println("Desk b is processing: " + ThreadTest.deskb.getCurrentPassenger());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (flag == 0) {
+                synchronized (this) {
+                    currentPassenger = businessCheckIn.poll();
+                }
+                try {
+                    generateBusinessDesk(currentPassenger, flightList);
+//                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
+                    TimeUnit.SECONDS.sleep(1);//为了测试先使用固定时间
+                    System.out.println("Size of B waiting for security check is "+businessSecurityCheck.size());
+                    System.out.println("Desk b is processing: " + currentPassenger);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
-        while(!businessCheckIn.isEmpty()){
-            try {
-                generateEconomyDesk(businessCheckIn, flightList);
-                TimeUnit.SECONDS.sleep(1);
-                System.out.println(businessSecurityCheck.size());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if(businessCheckIn.isEmpty() || economyCheckIn.isEmpty()){
-            try {
-                TimeUnit.SECONDS.sleep(1);
-                System.out.println("Wait for passengers...");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (businessCheckIn.isEmpty() || economyCheckIn.isEmpty()) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                    System.out.println("Wait for passengers...");
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
