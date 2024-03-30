@@ -6,12 +6,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class ThreadTest {
-	
+
     static CheckInDesk deske1 = null;
     static CheckInDesk deske2 = null;
     static CheckInDesk deskb = null;
-    
-    
+
+
     public static void main(String[] args) throws IOException {
 
         List<Passenger> passengerList;
@@ -21,12 +21,9 @@ public class ThreadTest {
         Queue<Passenger> eSecurityCheck = new LinkedList<>();
         Queue<Passenger> bSecurityCheck = new LinkedList<>();
         ReadFiles fcs = new ReadFiles();
-        
-
-        
 
         fcs.readPassengers("NEW_passenger_bookings_2.0.csv");
-        fcs.readFlights("Flight Detail.csv"); 
+        fcs.readFlights("Flight Detail.csv");
         passengerList = fcs.getPassengerList();
         flightList = fcs.getFlightList();
 
@@ -39,19 +36,19 @@ public class ThreadTest {
         ExecutorService executor = Executors.newFixedThreadPool(3);
 
         // Create check-in desks
-        deske1 = new CheckInDesk(eClass,flightList);
-        deske2 = new CheckInDesk(eClass,flightList);
-        deskb = new CheckInDesk(bClass,flightList);
+        deske1 = new CheckInDesk(eClass,null,flightList);
+        deske2 = new CheckInDesk(eClass,null,flightList);
+        deskb = new CheckInDesk(null,bClass,flightList);
 
         executor.execute(deske1);
         executor.execute(deske2);
         executor.execute(deskb);
-        
+
 
 
 //        ExecutorService executor = Executors.newFixedThreadPool(3);
 
-        // 灏嗕箻瀹㈠垎绫诲拰鍒濆鍖栨绁ㄦ煖鍙扮殑浠诲姟鎻愪氦鍒扮嚎绋嬫睜涓�
+        // 将乘客分类和初始化检票柜台的任务提交到线程池中
 //        Runnable initializeDesksTask = () -> {
 //            Queue<Passenger> eClass = new LinkedList<>();
 //            Queue<Passenger> bClass = new LinkedList<>();
@@ -60,7 +57,7 @@ public class ThreadTest {
 //            System.out.println("Class Type 0 Queue:" + eClass.size());
 //            System.out.println("Class Type 1 Queue:" + bClass.size());
 //
-//            // 鍒涘缓妫�绁ㄦ煖鍙颁换鍔″苟鎻愪氦鍒扮嚎绋嬫睜涓�
+//            // 创建检票柜台任务并提交到线程池中
 //            executor.execute(new CheckInDesk(eClass, flightList));
 //            executor.execute(new CheckInDesk(eClass, flightList));
 //            executor.execute(new CheckInDesk(bClass, flightList));

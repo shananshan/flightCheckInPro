@@ -29,12 +29,11 @@ public class CheckInDesk implements Runnable{
     static Queue<Passenger> economySecurityCheck2= new LinkedList<>();
     static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
     static ReadFiles fcs = new ReadFiles();
-    private final Queue<Passenger> passQueue;
     private static List<Flight> flightList;
     
     //public static Passenger thisPass;
-    private volatile Passenger currentPassenger; // 当前正在处理的乘客    
-    
+    private volatile Passenger currentPassenger; // 当前正在处理的乘客
+
     LocalTime time = LocalTime.of(6,30,20,200);
 
 //    private static List<Flight> flightList = fcs.getFlightList();
@@ -42,13 +41,22 @@ public class CheckInDesk implements Runnable{
     static List<Flight> flightOnTime = flightList;
     static List<Flight> flightLate = null;
     static String flightLate1 = "Flight Late: ";
-    
+
     Random rand = new Random();
 //    private Queue<Passenger> passQueue;
 //    private List<Flight> flightList;
 //    private Queue<Passenger> sQueue;
 //    private List<Flight> flightList = fcs.getFlightList();
 
+    public static void separatePassengerByClassType(Passenger passenger, Queue<Passenger> economy, Queue<Passenger> business) {
+//        for (Passenger passenger : passengerList) {
+            if (passenger.classType.equals("1")) {
+                economy.offer(passenger);
+            } else if (passenger.classType.equals("0")) {
+                business.offer(passenger);
+            }
+//        }
+    }
     public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
         for (Passenger passenger : passengerList) {
             if (passenger.classType.equals("1")) {
@@ -58,7 +66,6 @@ public class CheckInDesk implements Runnable{
             }
         }
     }
-
 
     public String checkFlightOnTime(List<Flight> flightOnTime){
     	for(Flight flight:flightOnTime) {
@@ -117,7 +124,6 @@ public class CheckInDesk implements Runnable{
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
-//z                thisPass = pass;
                 desk1Vacancy = true;
                 economySecurityCheck.add(pass);
             } else {
@@ -128,7 +134,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             desk1Vacancy = true;
         }
-//       System.out.println(warning);
+//        System.out.println(warning);
         System.out.println(pass);
         return economySecurityCheck;
     }
@@ -179,7 +185,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
-//        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println(pass);
         Logger.getInstance().log(pass.name);
         return businessSecurityCheck;
@@ -257,14 +263,15 @@ public class CheckInDesk implements Runnable{
         }, 0, 6000);
     }
 
-    public CheckInDesk(Queue<Passenger> passQueue, List<Flight> flightList) {
-        this.passQueue = passQueue;
+    public CheckInDesk(Queue<Passenger> businessCheckIn, Queue<Passenger> economyCheckIn,List<Flight> flightList) {
+//        this.passQueue = passQueue;
         this.businessCheckIn = businessCheckIn;
+        this.economyCheckIn = economyCheckIn;
         this.flightList = flightList;
 //        this.sQueue = sQueue;
 //        this.flightList = flightList;
     }
-    
+
     public synchronized Passenger getCurrentPassenger() {
         return currentPassenger;
     }
@@ -272,10 +279,10 @@ public class CheckInDesk implements Runnable{
     @Override
     public void run() {
 //       public Queue<Passenger> ..
-        while (!passQueue.isEmpty()) {
-        	
+        while (!economyCheckIn.isEmpty()) {
+
         	synchronized (this) {
-                currentPassenger = passQueue.poll();
+                currentPassenger = economyCheckIn.poll();
             }
 //            while (!businessCheckIn.isEmpty()) {
 //            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
@@ -287,18 +294,26 @@ public class CheckInDesk implements Runnable{
 //                }
 //            }
             try {
-//                sQueue = generateEconomyDesk(passQueue, flightList);
-                generateEconomyDesk(passQueue, flightList);
+                generateEconomyDesk(economyCheckIn, flightList);
                 TimeUnit.SECONDS.sleep(rand.nextInt(10)+ 0);
 //               System.out.println(economySecurityCheck.size());
-               System.out.println("Desk e1 is processing: " + ThreadTest.deske1.getCurrentPassenger());
-               System.out.println("Desk e2 is processing: " + ThreadTest.deske2.getCurrentPassenger());
-               System.out.println("Desk b is processing: " + ThreadTest.deskb.getCurrentPassenger());
-                           } catch (InterruptedException e) {
+                System.out.println("Desk e1 is processing: " + ThreadTest.deske1.getCurrentPassenger());
+                System.out.println("Desk e2 is processing: " + ThreadTest.deske2.getCurrentPassenger());
+                System.out.println("Desk b is processing: " + ThreadTest.deskb.getCurrentPassenger());
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        if(passQueue.isEmpty()){
+        while(!businessCheckIn.isEmpty()){
+            try {
+                generateEconomyDesk(businessCheckIn, flightList);
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(businessSecurityCheck.size());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if(businessCheckIn.isEmpty() || economyCheckIn.isEmpty()){
             try {
                 TimeUnit.SECONDS.sleep(1);
                 System.out.println("Wait for passengers...");
