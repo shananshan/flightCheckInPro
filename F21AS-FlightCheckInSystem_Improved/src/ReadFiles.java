@@ -26,7 +26,8 @@ public class ReadFiles {
         String line = reader.readLine(); // Assume the first line contains headers and skip it
         while ((line = reader.readLine())!= null) {
             String[] data = line.split(",");
-            passengerList.add(new Passenger(data));
+            Passenger p = new Passenger(data);
+            passengerList.add(p);
         }
         reader.close();
     }
