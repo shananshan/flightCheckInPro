@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -31,6 +32,9 @@ public class CheckInDesk implements Runnable{
     private final Queue<Passenger> passQueue;
     private static List<Flight> flightList;
     
+    //public static Passenger thisPass;
+    private volatile Passenger currentPassenger; // 当前正在处理的乘客    
+    
     LocalTime time = LocalTime.of(6,30,20,200);
 
 //    private static List<Flight> flightList = fcs.getFlightList();
@@ -38,6 +42,8 @@ public class CheckInDesk implements Runnable{
     static List<Flight> flightOnTime = flightList;
     static List<Flight> flightLate = null;
     static String flightLate1 = "Flight Late: ";
+    
+    Random rand = new Random();
 //    private Queue<Passenger> passQueue;
 //    private List<Flight> flightList;
 //    private Queue<Passenger> sQueue;
@@ -81,7 +87,7 @@ public class CheckInDesk implements Runnable{
 //        LocalTime time = LocalTime.now(); // Current time
 //        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
 //        System.out.println(time);
-		time = time.plusSeconds(20);
+//		time = time.plusSeconds(20);
 
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
@@ -99,8 +105,8 @@ public class CheckInDesk implements Runnable{
                 }
             }
         }, 60000); // 60 seconds
-        System.out.println("aaaaaaaaa" + time);
-        System.out.println(flightTime);
+//        System.out.println("aaaaaaaaa" + time);
+//        System.out.println(flightTime);
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
@@ -111,6 +117,7 @@ public class CheckInDesk implements Runnable{
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
+//z                thisPass = pass;
                 desk1Vacancy = true;
                 economySecurityCheck.add(pass);
             } else {
@@ -121,7 +128,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             desk1Vacancy = true;
         }
-//        System.out.println(warning);
+//       System.out.println(warning);
         System.out.println(pass);
         return economySecurityCheck;
     }
@@ -172,7 +179,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
+//        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println(pass);
         Logger.getInstance().log(pass.name);
         return businessSecurityCheck;
@@ -257,11 +264,19 @@ public class CheckInDesk implements Runnable{
 //        this.sQueue = sQueue;
 //        this.flightList = flightList;
     }
+    
+    public synchronized Passenger getCurrentPassenger() {
+        return currentPassenger;
+    }
 
     @Override
     public void run() {
 //       public Queue<Passenger> ..
         while (!passQueue.isEmpty()) {
+        	
+        	synchronized (this) {
+                currentPassenger = passQueue.poll();
+            }
 //            while (!businessCheckIn.isEmpty()) {
 //            generateBusinessDesk(businessCheckIn, ReadFiles.flightList);
 //            System.out.println(businessSecurityCheck.size());
@@ -274,9 +289,12 @@ public class CheckInDesk implements Runnable{
             try {
 //                sQueue = generateEconomyDesk(passQueue, flightList);
                 generateEconomyDesk(passQueue, flightList);
-                TimeUnit.SECONDS.sleep(1);
-               System.out.println(economySecurityCheck.size());
-            } catch (InterruptedException e) {
+                TimeUnit.SECONDS.sleep(rand.nextInt(10)+ 0);
+//               System.out.println(economySecurityCheck.size());
+               System.out.println("Desk e1 is processing: " + ThreadTest.deske1.getCurrentPassenger());
+               System.out.println("Desk e2 is processing: " + ThreadTest.deske2.getCurrentPassenger());
+               System.out.println("Desk b is processing: " + ThreadTest.deskb.getCurrentPassenger());
+                           } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
