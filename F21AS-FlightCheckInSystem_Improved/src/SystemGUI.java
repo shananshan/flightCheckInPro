@@ -24,9 +24,10 @@ public class SystemGUI extends JFrame implements ActionListener{
     
     ReadFiles fcs = new ReadFiles();
     Queue<Passenger> checked = new LinkedList<>();
-	
-
+ 
     public SystemGUI() throws IOException {
+     super();//调用JFrame的构造方法并进行初始化
+        this.setLayout(new FlowLayout());//设置布局管理器，它按照组件的添加顺序，从左到右排列组件，达到边界时自动换行
         setTitle("Airport Check-In System");
         setSize(800, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,20 +40,21 @@ public class SystemGUI extends JFrame implements ActionListener{
         fcs.readPassengers("NEW_passenger_bookings_2.0.csv");
         fcs.readFlights("Flight Detail.csv");
         
-        label = new JLabel("Welcome to Scrolling GUI, " + CheckInDesk.flightLate1);
+        label = new JLabel("Welcome to Scrolling GUI"+ CheckInDesk.flightLate1);
         label.setFont(new Font("Arial", Font.PLAIN, 20));
         mainPanel.add(label);
-        timer = new Timer(50,this); // 璁剧疆瀹氭椂鍣紝姣�50姣瑙﹀彂涓�娆�
-        timer.start(); // 鍚姩瀹氭椂鍣�
-        
-        queuedPassengers1 = new JLabel("Queued Passengers: List of eco passengers");
+        timer = new Timer(50,this); // 设置定时器，每50毫秒触发一次
+        timer.start(); // 启动定时器
+        //Queue for economy class
+        queuedPassengers1 = new JLabel("Queued Passengers: List of Economy passengers");
         mainPanel.add(queuedPassengers1);
-        JPanel queued1 = createecoPassenger();
-        mainPanel.add(queued1);
+        JPanel economyPanel = createEcoPassenger();
+        mainPanel.add(economyPanel);
+        //Queue for business class
         queuedPassengers2 = new JLabel("Queued Passengers: List of Business passengers");
         mainPanel.add(queuedPassengers2);
-        JPanel queued2 = createBusinessPassenger();
-        mainPanel.add(queued2);
+        JPanel businessPanel = createBusPassenger();
+        mainPanel.add(businessPanel);
         
 
         // Check-in desks
@@ -68,61 +70,64 @@ public class SystemGUI extends JFrame implements ActionListener{
         mainPanel.add(flightStatusPanel);
 
         add(mainPanel);
-        pack(); // 鏍规嵁缁勪欢澶у皬鑷姩璋冩暣绐楀彛澶у皬
+        pack(); // 根据组件大小自动调整窗口大小
     }
   
-    private JPanel createecoPassenger() {
-    	JPanel panel = new JPanel();
-    	// 鍒涘缓鍖呭惈涔樺淇℃伅鐨勬枃鏈尯鍩�
-    	
+    private JPanel createEcoPassenger() {
+     JPanel ecoQueuePanel = new JPanel();
+      // 从CheckInDesk类获取经济舱乘客队列
+        Queue<Passenger> economyQueue = CheckInDesk.economyCheckIn;
+        
+        // 创建包含乘客信息的文本区域
         queuedPassengersArea = new JTextArea(8, 70);
-        StringBuilder sb = new StringBuilder(); // 浣跨敤 StringBuilder 鏉ユ瀯寤烘渶缁堢殑瀛楃涓�
-        for (Passenger p : fcs.getPassengerList()) {
-            sb.append(p.toString()).append("\n"); // 灏嗘瘡涓箻瀹㈢殑淇℃伅娣诲姞鍒� StringBuilder 涓�
+        StringBuilder sb = new StringBuilder(); // 使用 StringBuilder 来构建最终的字符串
+        
+        // 这里只遍历经济舱乘客的队列
+        for (Passenger p : economyQueue) {
+            sb.append(p.toString()).append("\n"); // 将每个经济舱乘客的信息添加到StringBuilder中
         }
-        queuedPassengersArea.setText(sb.toString()); // 灏嗘瀯寤哄ソ鐨勫瓧绗︿覆璁剧疆缁� JTextArea
-        queuedPassengersArea.setEditable(false); // 璁句负涓嶅彲缂栬緫
-        // 灏嗘枃鏈尯鍩熸斁鍏ユ粴鍔ㄩ潰鏉夸腑
+        
+        queuedPassengersArea.setText(sb.toString()); // 将构建好的字符串设置给JTextArea
+        queuedPassengersArea.setEditable(false); // 设为不可编辑
+        
+        // 将文本区域放入滚动面板中
         queuedPassengersScroll = new JScrollPane(queuedPassengersArea);
-        panel.add(queuedPassengersScroll);
-
-        // Queued passengers
-//        queuedPassengers = new JLabel("Queued Passengers: List of passengers");
-//        panel.add(queuedPassengers);
-        return panel;
+        ecoQueuePanel.add(queuedPassengersScroll);
+        
+        return ecoQueuePanel;
     }
-    private JPanel createBusinessPassenger() {
-    	JPanel panel = new JPanel();
-    	// 鍒涘缓鍖呭惈涔樺淇℃伅鐨勬枃鏈尯鍩�
+    private JPanel createBusPassenger() {
+     JPanel busQueuePanel = new JPanel();
+     // 创建包含乘客信息的文本区域
         queuedPassengersArea = new JTextArea(8, 70);
        
-        StringBuilder sb = new StringBuilder(); // 浣跨敤 StringBuilder 鏉ユ瀯寤烘渶缁堢殑瀛楃涓�
+        StringBuilder sb = new StringBuilder(); // 使用 StringBuilder 来构建最终的字符串
         for (Passenger p : fcs.getPassengerList()) {
-            sb.append(p.toString()).append("\n"); // 灏嗘瘡涓箻瀹㈢殑淇℃伅娣诲姞鍒� StringBuilder 涓�
+            sb.append(p.toString()).append("\n"); // 将每个乘客的信息添加到 StringBuilder 中
         }
-        queuedPassengersArea.setText(sb.toString()); // 灏嗘瀯寤哄ソ鐨勫瓧绗︿覆璁剧疆缁� JTextArea
-        queuedPassengersArea.setEditable(false); // 璁句负涓嶅彲缂栬緫
-        // 灏嗘枃鏈尯鍩熸斁鍏ユ粴鍔ㄩ潰鏉夸腑
+        queuedPassengersArea.setText(sb.toString()); // 将构建好的字符串设置给 JTextArea
+        queuedPassengersArea.setEditable(false); // 设为不可编辑
+        // 将文本区域放入滚动面板中
         queuedPassengersScroll = new JScrollPane(queuedPassengersArea);
-        panel.add(queuedPassengersScroll);
+        busQueuePanel.add(queuedPassengersScroll);
 
         // Queued passengers
        
 
-        return panel;
+        return busQueuePanel;
     }
 
     private JPanel createDeskPanel() {
         // Add desk info here
         deskAreas = new JTextArea[3];
-        JPanel countersPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // 涓変釜鏌滃彴妯悜甯冨眬
+        JPanel countersPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // 三个柜台横向布局
 
         for (int i = 0; i < deskAreas.length; i++) {
             deskAreas[i] = new JTextArea(5, 20);
-            deskAreas[i].setEditable(false); // 璁剧疆鏂囨湰鍖哄煙涓嶅彲缂栬緫
-            JScrollPane scrollPane = new JScrollPane(deskAreas[i]); // 涓烘瘡涓枃鏈尯鍩熸坊鍔犳粴鍔ㄦ潯
-            // 鍋囪缁欐瘡涓煖鍙版坊鍔犱箻瀹俊鎭�
-            deskAreas[i].setText("Desk " + (i + 1) + " Queue:\n" +"PAssenger...");
+            deskAreas[i].setEditable(false); // 设置文本区域不可编辑
+            JScrollPane scrollPane = new JScrollPane(deskAreas[i]); // 为每个文本区域添加滚动条
+            // 假设给每个柜台添加乘客信息
+            deskAreas[i].setText("Desk " + (i + 1) + " Queue:\n" +"Passenger...");
 
             countersPanel.add(scrollPane);
         }
@@ -133,16 +138,16 @@ public class SystemGUI extends JFrame implements ActionListener{
     }
 
     private JPanel createSecurityCheckPanel() {
-    	 // Add desk info here
-    	securityAreas = new JTextArea[3];
-        JPanel countersPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // 涓変釜鏌滃彴妯悜甯冨眬
+      // Add desk info here
+     securityAreas = new JTextArea[3];
+        JPanel countersPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // 三个柜台横向布局
 
         for (int i = 0; i < deskAreas.length; i++) {
-        	securityAreas[i] = new JTextArea(5, 20);
-        	securityAreas[i].setEditable(false); // 璁剧疆鏂囨湰鍖哄煙涓嶅彲缂栬緫
-            JScrollPane scrollPane = new JScrollPane(securityAreas[i]); // 涓烘瘡涓枃鏈尯鍩熸坊鍔犳粴鍔ㄦ潯
-            // 鍋囪缁欐瘡涓煖鍙版坊鍔犱箻瀹俊鎭�
-            securityAreas[i].setText("Security " + (i + 1) + " Queue:\n" +"PAssenger...");
+         securityAreas[i] = new JTextArea(5, 20);
+         securityAreas[i].setEditable(false); // 设置文本区域不可编辑
+            JScrollPane scrollPane = new JScrollPane(securityAreas[i]); // 为每个文本区域添加滚动条
+            // 假设给每个柜台添加乘客信息
+            securityAreas[i].setText("Security " + (i + 1) + " Queue:\n" +"Passenger...");
 
             countersPanel.add(scrollPane);
         }
@@ -153,17 +158,17 @@ public class SystemGUI extends JFrame implements ActionListener{
     }
 
     private JPanel createFlightStatusPanel() {
-    	 // Add desk info here
-    	flight = new JTextArea[3];
-        JPanel panel = new JPanel(new GridLayout(1, 3, 10, 10)); // 涓変釜鏌滃彴妯悜甯冨眬
+      // Add desk info here
+     flight = new JTextArea[3];
+        JPanel panel = new JPanel(new GridLayout(1, 3, 10, 10)); // 三个柜台横向布局
 
         for (int i = 0; i < deskAreas.length; i++) {
-        	securityAreas[i] = new JTextArea(5, 20);
-        	securityAreas[i].setEditable(false); // 璁剧疆鏂囨湰鍖哄煙涓嶅彲缂栬緫
-            JScrollPane scrollPane = new JScrollPane(securityAreas[i]); // 涓烘瘡涓枃鏈尯鍩熸坊鍔犳粴鍔ㄦ潯
+         securityAreas[i] = new JTextArea(5, 20);
+         securityAreas[i].setEditable(false); // 设置文本区域不可编辑
+            JScrollPane scrollPane = new JScrollPane(securityAreas[i]); // 为每个文本区域添加滚动条
 
-            // 鍋囪缁欐瘡涓煖鍙版坊鍔犱箻瀹俊鎭�
-            securityAreas[i].setText("Flight " + (i + 1) + " Queue:\n" +"PAssenger...");
+            // 假设给每个柜台添加乘客信息
+            securityAreas[i].setText("Flight " + (i + 1) + " Queue:\n" +"Passenger...");
 
             panel.add(scrollPane);
         }
@@ -174,26 +179,26 @@ public class SystemGUI extends JFrame implements ActionListener{
     }
     
     public void actionPerformed(ActionEvent e) {
-        // 褰撳畾鏃跺櫒瑙﹀彂鏃讹紝鏇存柊鏍囩鐨勪綅缃�
-    	
+        // 当定时器触发时，更新标签的位置
+     
         xPos++;
         label.setLocation(xPos, 0);
 
-        // 褰撴爣绛剧Щ鍑虹獥鍙ｈ竟鐣屾椂锛屽皢鍏剁Щ鍥炵獥鍙ｅ乏渚�
+        // 当标签移出窗口边界时，将其移回窗口左侧
         if (xPos >= getWidth()) {
             xPos = -label.getWidth();
         }
     }
 
     public static void main(String[] args) {
-    	
+     
         SwingUtilities.invokeLater(() -> {
             try {
-				new SystemGUI().setVisible(true);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    new SystemGUI().setVisible(true);
+   } catch (IOException e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
+   }
         });
     }
 }
