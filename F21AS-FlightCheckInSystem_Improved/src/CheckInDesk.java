@@ -77,7 +77,7 @@ public class CheckInDesk implements Runnable{
         Passenger pass = economyCheckIn.poll();
         desk1Vacancy = false;
         LocalTime time = LocalTime.now(); // Current time
-        time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
 
@@ -128,7 +128,7 @@ public class CheckInDesk implements Runnable{
         Passenger pass = businessCheckIn.poll();
         deskBVacancy = false;
         LocalTime time = LocalTime.now(); // Current time
-        time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
 
