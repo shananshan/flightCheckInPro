@@ -29,6 +29,7 @@ public class CheckInDesk implements Runnable{
     static Queue<Passenger> economySecurityCheck2= new LinkedList<>();
     static Queue<Passenger> economySecurityCheck3= new LinkedList<>();
     static ReadFiles fcs = new ReadFiles();
+    //private final Queue<Passenger> passQueue;
     private static List<Flight> flightList;
     
     //public static Passenger thisPass;
@@ -82,7 +83,14 @@ public class CheckInDesk implements Runnable{
 		return flightLate1;
     }
 
-
+    private static Flight findFlightByCode(String flightCode) {
+        for (Flight flight : flightList) {
+            if (flight.flightCode.equals(flightCode)) {
+                return flight;
+            }
+        }
+        return null;
+    }
  /**
      * Generates check-in for economy class passengers.
      * @return Warning message if any.
@@ -96,6 +104,7 @@ public class CheckInDesk implements Runnable{
 //        System.out.println(time);
 //		time = time.plusSeconds(20);
 
+        Flight matchingFlight = findFlightByCode(pass.getFlightCode());
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
 
@@ -116,7 +125,7 @@ public class CheckInDesk implements Runnable{
 //        System.out.println(flightTime);
 
         // Check if the passenger's check-in and fee payment are not yet completed
-        if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
+        if (matchingFlight != null && !pass.getFeePaymentSuccess()) {
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
@@ -150,6 +159,7 @@ public class CheckInDesk implements Runnable{
 //        LocalTime time = LocalTime.now(); // Current time
 //        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
+        Flight matchingFlight = findFlightByCode(pass.getFlightCode());
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -167,7 +177,7 @@ public class CheckInDesk implements Runnable{
         }, 60000); // 60 seconds
 
         // Check if the passenger's check-in and fee payment are not yet completed
-        if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
+        if (matchingFlight != null && !pass.getFeePaymentSuccess()) {
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
