@@ -70,7 +70,7 @@ public class ReadFiles {
         int s = takeOffTime.getSecond();
 //	    flightTime = LocalTime.of(h, m, s);
         flightTime = flightTime.withHour(h).withMinute(m).withSecond(s);
-//        flightTime = flightTime.withHour(5).withMinute(30).withSecond(20); // Set a hypothetical current time
+//        flightTime = flightTime.withHour(23).withMinute(30).withSecond(20); // Set a hypothetical current time
         return flightTime;
     }
     

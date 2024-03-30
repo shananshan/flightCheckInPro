@@ -78,7 +78,7 @@ public class CheckInDesk implements Runnable{
         desk1Vacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = fcs.getFlightTime(flightList,pass.flightCode);
+        LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
@@ -129,7 +129,7 @@ public class CheckInDesk implements Runnable{
         deskBVacancy = false;
         LocalTime time = LocalTime.now(); // Current time
         time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-        LocalTime flightTime = fcs.getFlightTime(flightList,pass.flightCode);
+        LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
 
         // Start timer to track if desk1Vacancy changes to true within 60 seconds
