@@ -48,10 +48,21 @@ public class Flight {
         
     }
 
-	public static float calulatefee(float dimension, float weight) {
-        // calculate the extra fee...
-		
-        return 0;
+	public float calulatefee(float dimension, float weight) {
+		double extraWeightFee = 0.0;
+        double extraVolumeFee = 0.0;
+
+        // 如果重量超过最大允许值，计算额外重量费用
+        if (weight > this.maximumBaggageWeight) {
+            extraWeightFee = (weight - this.maximumBaggageWeight) * this.extraWeightFee;
+        }
+
+        // 如果体积超过最大允许值，计算额外体积费用
+        if (dimension > this.maxbaggageVolume) {
+            extraVolumeFee = (dimension - this.maxbaggageVolume) * this.extraVolumeFee;
+        }
+
+        return (float) (extraWeightFee + extraVolumeFee);
     }
 	
 	public static float calulateload(float dimension, float weight) {
@@ -76,4 +87,6 @@ public class Flight {
 	        return String.format(flightCode + " , " + destination + " , " + carrier + " , " + maximumPassengers + " , " + maximumBaggageWeight + " , " + maxbaggageVolume+" ,"
 	        		+ +extraVolumeFee+","+ extraWeightFee+" , "+maxFlightWeight+" , " +maxFlightVolume+" , "+TakeoffTime);
 	    }
+
+
 }
