@@ -30,6 +30,8 @@ public class CheckInDesk implements Runnable{
     static ReadFiles fcs = new ReadFiles();
     private final Queue<Passenger> passQueue;
     private static List<Flight> flightList;
+    
+    LocalTime time = LocalTime.of(6,30,20,200);
 
 //    private static List<Flight> flightList = fcs.getFlightList();
 
@@ -52,10 +54,10 @@ public class CheckInDesk implements Runnable{
     }
 
 
-    public static String checkFlightOnTime(List<Flight> flightOnTime){
+    public String checkFlightOnTime(List<Flight> flightOnTime){
     	for(Flight flight:flightOnTime) {
-    		LocalTime time = LocalTime.now(); // Current time
-            time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+//    		LocalTime time = LocalTime.now(); // Current time
+//            time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
     		LocalTime flightTime =fcs.getFlightTime(flightOnTime,flight.flightCode);
     		if(flightTime.isBefore(time)) {
     			flightOnTime.remove(flight);
@@ -72,12 +74,15 @@ public class CheckInDesk implements Runnable{
      * Generates check-in for economy class passengers.
      * @return Warning message if any.
      */
-    public static Queue<Passenger> generateEconomyDesk(Queue<Passenger> economyCheckIn, List<Flight> flightList){
+    public Queue<Passenger> generateEconomyDesk(Queue<Passenger> economyCheckIn, List<Flight> flightList){
         // Removes a passenger from the economy check-in queue and processes their check-in.
         Passenger pass = economyCheckIn.poll();
         desk1Vacancy = false;
-        LocalTime time = LocalTime.now(); // Current time
-        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+//        LocalTime time = LocalTime.now(); // Current time
+//        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+//        System.out.println(time);
+		time = time.plusSeconds(20);
+
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
 
@@ -94,6 +99,8 @@ public class CheckInDesk implements Runnable{
                 }
             }
         }, 60000); // 60 seconds
+        System.out.println("aaaaaaaaa" + time);
+        System.out.println(flightTime);
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
@@ -114,7 +121,7 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             desk1Vacancy = true;
         }
-        System.out.println("------------------------------------------");
+//        System.out.println(warning);
         System.out.println(pass);
         return economySecurityCheck;
     }
@@ -123,12 +130,12 @@ public class CheckInDesk implements Runnable{
      * Generates check-in for business class passengers.
      * @return Warning message if any.
      */
-    public static Queue<Passenger> generateBusinessDesk(Queue<Passenger> businessCheckIn, List<Flight> flightList){
+    public Queue<Passenger> generateBusinessDesk(Queue<Passenger> businessCheckIn, List<Flight> flightList){
         // Removes a passenger from the business check-in queue and processes their check-in.
         Passenger pass = businessCheckIn.poll();
         deskBVacancy = false;
-        LocalTime time = LocalTime.now(); // Current time
-        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
+//        LocalTime time = LocalTime.now(); // Current time
+//        time = time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
         String warning = null;
 
@@ -203,7 +210,7 @@ public class CheckInDesk implements Runnable{
             if (passenger != null) {
                 shortestQueue.add(passenger);
                 System.out.println("Passenger added to shortest queue: " + passenger);
-                sleep(5000); // 等待5秒
+                sleep(5000); // 绛夊緟5绉�
             }
         }
     }
@@ -229,7 +236,7 @@ public class CheckInDesk implements Runnable{
         }
     }
 
- // 启动定时任务，每六秒清除队首元素
+ // 鍚姩瀹氭椂浠诲姟锛屾瘡鍏娓呴櫎闃熼鍏冪礌
     public static void startTimer(Queue<Passenger> queue) {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -268,7 +275,7 @@ public class CheckInDesk implements Runnable{
 //                sQueue = generateEconomyDesk(passQueue, flightList);
                 generateEconomyDesk(passQueue, flightList);
                 TimeUnit.SECONDS.sleep(1);
-                System.out.println(economySecurityCheck.size());
+               System.out.println(economySecurityCheck.size());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
