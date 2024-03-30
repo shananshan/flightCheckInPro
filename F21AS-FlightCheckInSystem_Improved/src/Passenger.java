@@ -98,7 +98,7 @@ public class Passenger {
 	}
 
 	public String toString() {
-		return String.format(name + " , " + flightCode + " , " + luggageDimensions + " , " + luggageWeight + " , " + classType + " , " + (checkInSuccess ? "True" : "False")+" , "+fee);
+		return String.format(name + " , " + flightCode + " , " + luggageDimensions + " , " + luggageWeight + " kg");
 	}
 
 
