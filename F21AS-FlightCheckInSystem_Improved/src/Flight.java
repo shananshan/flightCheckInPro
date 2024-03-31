@@ -52,12 +52,12 @@ public class Flight {
 		double extraWeightFee = 0.0;
         double extraVolumeFee = 0.0;
 
-        // 如果重量超过最大允许值，计算额外重量费用
+        // 濡傛灉閲嶉噺瓒呰繃鏈�澶у厑璁稿�硷紝璁＄畻棰濆閲嶉噺璐圭敤
         if (weight > this.maximumBaggageWeight) {
             extraWeightFee = (weight - this.maximumBaggageWeight) * this.extraWeightFee;
         }
 
-        // 如果体积超过最大允许值，计算额外体积费用
+        // 濡傛灉浣撶Н瓒呰繃鏈�澶у厑璁稿�硷紝璁＄畻棰濆浣撶Н璐圭敤
         if (dimension > this.maxbaggageVolume) {
             extraVolumeFee = (dimension - this.maxbaggageVolume) * this.extraVolumeFee;
         }
@@ -78,6 +78,11 @@ public class Flight {
 	 public double getmaxbaggageVolumet() {
 		  return maxFlightVolume;
 	    }
+	 
+		public double getmaxpassenger() {
+			return maximumPassengers;
+		}
+		
 	 public String gettakeoftime() {
 		  return TakeoffTime;
 	    }
@@ -87,6 +92,8 @@ public class Flight {
 	        return String.format(flightCode + " , " + destination + " , " + carrier + " , " + maximumPassengers + " , " + maximumBaggageWeight + " , " + maxbaggageVolume+" ,"
 	        		+ +extraVolumeFee+","+ extraWeightFee+" , "+maxFlightWeight+" , " +maxFlightVolume+" , "+TakeoffTime);
 	    }
+
+
 
 
 }
