@@ -73,7 +73,15 @@ public class CheckInDesk implements Runnable{
         }
 	
     }
-    
+    public static void separatePassengerByClassType(Passenger passenger, Queue<Passenger> economy, Queue<Passenger> business) {
+//        for (Passenger passenger : passengerList) {
+        if (passenger.classType.equals("1")) {
+            economy.offer(passenger);
+        } else if (passenger.classType.equals("0")) {
+            business.offer(passenger);
+        }
+//        }
+    }
     
     public static String checkFlightOnTime(List<Flight> flightOnTime){
     	for(Flight flight:flightOnTime) {
@@ -89,7 +97,15 @@ public class CheckInDesk implements Runnable{
     	}
 		return flightLate1;
     }
-    
+
+    private static Flight findFlightByCode(String flightCode) {
+        for (Flight flight : flightList) {
+            if (flight.flightCode.equals(flightCode)) {
+                return flight;
+            }
+        }
+        return null;
+    }
 
  /**
      * Generates check-in for economy class passengers.
@@ -100,6 +116,7 @@ public class CheckInDesk implements Runnable{
 //        Passenger pass = economyCheckIn.poll();
     	
         desk1Vacancy = false;
+        Flight matchingFlight = findFlightByCode(pass.getFlightCode());
         LocalTime time = LocalTime.now(); // Current time
         time =  time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
         LocalTime flightTime = fcs.getFlightTime(flightList,pass.getFlightCode());
@@ -119,11 +136,11 @@ public class CheckInDesk implements Runnable{
         }, 60000); // 60 seconds
 
         // Check if the passenger's check-in and fee payment are not yet completed
-        if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
+        if (matchingFlight != null && !pass.getFeePaymentSuccess()) {
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
-                float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
+                float fee = matchingFlight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
@@ -167,6 +184,7 @@ public class CheckInDesk implements Runnable{
         // Removes a passenger from the business check-in queue and processes their check-in.
 //        Passenger pass = businessCheckIn.poll();
         deskBVacancy = false;
+        Flight matchingFlight = findFlightByCode(pass.getFlightCode());
         LocalTime time = LocalTime.now(); // Current time
         // Set a hypothetical current time
         time =  time.withHour(6).withMinute(30).withSecond(20);
@@ -187,11 +205,11 @@ public class CheckInDesk implements Runnable{
         }, 60000); // 60 seconds
 
         // Check if the passenger's check-in and fee payment are not yet completed
-        if (!pass.getCheckInSuccess() && !pass.getFeePaymentSuccess()) {
+        if (matchingFlight != null && !pass.getFeePaymentSuccess()) {
             // Check if the current time is before or equal to the flight time
             if (time.isBefore(flightTime) || time.equals(flightTime)) {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
-                float fee = Flight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
+                float fee = matchingFlight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
