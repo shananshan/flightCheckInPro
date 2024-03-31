@@ -1,7 +1,10 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-	import java.util.Map;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Observer;
 
 	
 	class FlightStats {
@@ -15,7 +18,6 @@ import java.util.Objects;
 	    ReadFiles fcs = new ReadFiles();
 	    
 	   
-
 	    // 构造函数
 	    public FlightStats() {
 	        this.passengerCount = 0;
@@ -46,14 +48,14 @@ import java.util.Objects;
 	    
 	    public double getWeightHold(String flightNumber) {
 	    	Flight f  = fcs.getFlight(fcs.getFlightList(),flightNumber);
-	    	
 	    	weighthold  = (totalWeight / f.getmaximumBaggageWeight() ) * 100;
 	        return weighthold;
 	    }
+	    
 	    public double getSizeHold(String flightNumber) {
 	    	Flight f  = fcs.getFlight(fcs.getFlightList(),flightNumber);
 //	    	System.out.print(f);
-	    	sizehold  = (totalVolume / f.getmaximumBaggageWeight()) * 100;
+	    	sizehold  = (totalVolume / f.getmaxbaggageVolumet()) * 100;
 	        return sizehold;
 	    }
 	    
@@ -64,8 +66,6 @@ import java.util.Objects;
 	    private Map<String, FlightStats> flightMap;
 	    ReadFiles fcs = new ReadFiles();
 	    
-	  
-
 	    // 构造函数
 	    public FlightCheckIn() {
 	        this.flightMap = new HashMap<>();
@@ -76,8 +76,12 @@ import java.util.Objects;
 	        FlightStats stats = flightMap.getOrDefault(flightNumber, new FlightStats());
 	        stats.addPassenger(weight, volume);
 	        flightMap.put(flightNumber, stats);
+	        
 	    }
-
+	    
+	    public Map<String, FlightStats> getFlightMap() {
+	        return flightMap;
+	    }
 	    // 打印所有航班的统计信息
 	    public void printFlightStats() throws IOException {
 	    	fcs.readFlights("Flight Detail.csv");
@@ -91,14 +95,6 @@ import java.util.Objects;
 	            System.out.println("Weight Hold : " + stats.getWeightHold(flightNumber)+"%");
 	            System.out.println("Volume Hold : " + stats.getSizeHold(flightNumber)+"%");
 	        }
+			
 	    }
-	    
-//	    // 主函数，用于示例
-//	    public static void main(String[] args) {
-//	        FlightCheckIn system = new FlightCheckIn();
-//		
-////
-////	        // 打印统计信息
-//	        system.printFlightStats();
-//	    }
 	}
