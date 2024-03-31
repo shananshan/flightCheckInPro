@@ -71,31 +71,29 @@ public class CheckInDesk implements Runnable{
                 
             }
         }
-	
+
     }
-    public static void separatePassengerByClassType(Passenger passenger, Queue<Passenger> economy, Queue<Passenger> business) {
-//        for (Passenger passenger : passengerList) {
-        if (passenger.classType.equals("1")) {
-            economy.offer(passenger);
-        } else if (passenger.classType.equals("0")) {
-            business.offer(passenger);
+    public static void separatePassengerByClassType(Passenger passenger, ArrayBlockingQueue<Passenger> q1, ArrayBlockingQueue<Passenger> q2) {
+        if (q1.size() < q2.size()) {
+            q1.offer(passenger);
+        } else if (q2.size() <= q2.size()) {
+            q2.offer(passenger);
         }
-//        }
     }
     
     public static String checkFlightOnTime(List<Flight> flightOnTime){
-    	for(Flight flight:flightOnTime) {
-    		LocalTime time = LocalTime.now(); // Current time
+        for(Flight flight:flightOnTime) {
+            LocalTime time = LocalTime.now(); // Current time
             time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
-    		LocalTime flightTime =fcs.getFlightTime(flightOnTime,flight.flightCode);
-    		if(flightTime.isBefore(time)) {
-    			flightOnTime.remove(flight);
-    			flightLate.add(flight);
-    			flightLate1 = flightLate1 + ", " + flight.flightCode;
-    		}
-    		
-    	}
-		return flightLate1;
+            LocalTime flightTime =fcs.getFlightTime(flightOnTime,flight.flightCode);
+            if(flightTime.isBefore(time)) {
+                flightOnTime.remove(flight);
+                flightLate.add(flight);
+                flightLate1 = flightLate1 + ", " + flight.flightCode;
+            }
+
+        }
+        return flightLate1;
     }
 
     private static Flight findFlightByCode(String flightCode) {
@@ -111,10 +109,10 @@ public class CheckInDesk implements Runnable{
      * Generates check-in for economy class passengers.
      * @return Warning message if any.
      */
-    public static Queue<Passenger> generateEconomyDesk(Passenger pass, List<Flight> flightList){
+    public synchronized static Queue<Passenger> generateEconomyDesk(Passenger pass, List<Flight> flightList){
         // Removes a passenger from the economy check-in queue and processes their check-in.
 //        Passenger pass = economyCheckIn.poll();
-    	
+
         desk1Vacancy = false;
         Flight matchingFlight = findFlightByCode(pass.getFlightCode());
         LocalTime time = LocalTime.now(); // Current time
@@ -161,7 +159,7 @@ public class CheckInDesk implements Runnable{
        
 //        if(pass.getCheckInSuccess()== true) {
 //        	FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize());     
-        	
+
 //        	try {
 //    			FlightHold.printFlightStats();
 ////    			System.out.println("flight yes");
@@ -180,7 +178,7 @@ public class CheckInDesk implements Runnable{
      * Generates check-in for business class passengers.
      * @return Warning message if any.
      */
-    public static Queue<Passenger> generateBusinessDesk(Passenger pass, List<Flight> flightList){
+    public synchronized static Queue<Passenger> generateBusinessDesk(Passenger pass, List<Flight> flightList){
         // Removes a passenger from the business check-in queue and processes their check-in.
 //        Passenger pass = businessCheckIn.poll();
         deskBVacancy = false;
@@ -224,8 +222,8 @@ public class CheckInDesk implements Runnable{
             warning = giveRepeatCheckInError(); // Generate a warning message for repeated check-in
             deskBVacancy = true;
         }
-        
-		
+
+
 //        System.out.println("++++++++++++++++++++++++++++++++++++++++++++");
 //        System.out.println(pass);
 //        if(pass.getCheckInSuccess()== true) {
@@ -332,21 +330,21 @@ public class CheckInDesk implements Runnable{
     }
     
     public static Queue<Passenger> getEconomyqueue(){
-     	 return economyCheckIn;
-     	
-     }
+        return economyCheckIn;
+
+    }
     
     public static Queue<Passenger> getEconomyDesk(){
-   	 return economySecurityCheck;
-   	
-   }
+        return economySecurityCheck;
+
+    }
    
    public static Queue<Passenger> getBusinessDesk(){
-  	 return businessSecurityCheck;
-  	
-  }
+       return businessSecurityCheck;
+
+   }
    public synchronized Passenger getCurrentPassenger() {
-	   
+
        return currentPassenger;
    }
 public synchronized FlightCheckIn getFighthold() {
@@ -358,7 +356,7 @@ public synchronized FlightCheckIn getFighthold() {
     public void run() {
 //      public Queue<Passenger> ..
        while(true) {
-           if (flag == 1) {
+           if (flag == 1 && !economyCheckIn.isEmpty()) {
                synchronized (this) {
                    currentPassenger = economyCheckIn.poll();
                }
@@ -368,18 +366,12 @@ public synchronized FlightCheckIn getFighthold() {
 //                   TimeUnit.SECONDS.sleep(1);//为了测试先用了固定时间
                    System.out.println("Desk e is processing: " + currentPassenger);
                    System.out.println("Size of E waiting for security check is "+economySecurityCheck.size());
-                   try {
-					FlightHold.printFlightStats();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
                } catch (InterruptedException e) {
                    throw new RuntimeException(e);
                }
-
            }
-           if (flag == 0) {
+           if (flag == 0 && !businessCheckIn.isEmpty()) {
                synchronized (this) {
                    currentPassenger = businessCheckIn.poll();
                }
@@ -389,9 +381,16 @@ public synchronized FlightCheckIn getFighthold() {
 //                   TimeUnit.SECONDS.sleep(3);//为了测试先使用固定时间
                    System.out.println("Size of B waiting for security check is "+businessSecurityCheck.size());
                    System.out.println("Desk b is processing: " + currentPassenger);
+
                } catch (InterruptedException e) {
                    throw new RuntimeException(e);
                }
+           }
+           try {
+               FlightHold.printFlightStats();
+           } catch (IOException e) {
+               // TODO Auto-generated catch block
+               e.printStackTrace();
            }
            if (businessCheckIn.isEmpty() || economyCheckIn.isEmpty()) {
                try {

@@ -13,8 +13,8 @@ public class Flight {
     double extraVolumeFee; // Fee for each unit volume of baggage exceeding the maximum allowed.
     double extraWeightFee; // Fee for each unit weight of baggage exceeding the maximum allowed.
 
-    double maxFlightVolume; // Maximum total volume of baggage allowed on the flight.
-    double maxFlightWeight; // Maximum total weight of baggage allowed on the flight.
+    static double maxFlightVolume; // Maximum total volume of baggage allowed on the flight.
+    static double maxFlightWeight; // Maximum total weight of baggage allowed on the flight.
     
 	String flightCode;
 	String destination;
@@ -70,12 +70,12 @@ public class Flight {
         return 0;
     }
 	
-	 public double getmaximumBaggageWeight() {
+	 public static double getmaximumBaggageWeight() {
 		 return maxFlightWeight;
 		 
 	    }
 	 
-	 public double getmaxbaggageVolumet() {
+	 public static double getmaxbaggageVolumet() {
 		  return maxFlightVolume;
 	    }
 	 public String gettakeoftime() {
