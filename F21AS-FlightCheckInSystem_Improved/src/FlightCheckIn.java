@@ -98,6 +98,12 @@ import java.util.Observer;
 	        flightMap.put(flightNumber, stats);
 	        
 	    }
+	public static FlightStats getFlightStats(Map<String, FlightStats> map,String flightNumber) {
+	    	FlightStats stats = map.get(flightNumber);
+	        return stats;
+	    }
+	  
+	  
 	    
 	    public Map<String, FlightStats> getFlightMap() {
 	        return flightMap;
