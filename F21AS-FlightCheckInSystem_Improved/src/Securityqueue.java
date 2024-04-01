@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Secutiryqueue implements Runnable {
+public class Securityqueue implements Runnable {
     private Queue<Passenger> checkInQueue; // 待安检的队列
-    private ConcurrentLinkedQueue<Passenger> securityQueue; // 安检队列
+    private Queue<Passenger> securityQueue; // 安检队列
     private String type; // 安检窗口类型（商务舱或经济舱）
     private static List<Observer> observers = new ArrayList<>();
     private volatile Passenger currentPassenger; // 当前正在处理的乘客    
 
-    public Secutiryqueue(Queue<Passenger> checkInQueue, ConcurrentLinkedQueue<Passenger> securityQueue, String type) {
+    public Securityqueue(Queue<Passenger> checkInQueue, Queue<Passenger> securityQueue, String type) {
         this.checkInQueue = checkInQueue;
         this.securityQueue = securityQueue;
         this.type = type;

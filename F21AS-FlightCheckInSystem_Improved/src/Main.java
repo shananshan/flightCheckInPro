@@ -20,7 +20,7 @@ public class Main{
     static FlightCheckIn flightInfo;
     static FlightCheckIn FlightHold = new FlightCheckIn();
     static Queue<Passenger> economySecurityCheck= new LinkedList<>(), businessSecurityCheck= new LinkedList<>();
-    static ConcurrentLinkedQueue<Passenger> businessSecurityQueue = new ConcurrentLinkedQueue<>(), economySecurityQueue = new ConcurrentLinkedQueue<>();
+    static Queue<Passenger> businessSecurityQueue = new LinkedList<>(), economySecurityQueue = new LinkedList<>();
 
 
     public static void main(String[] args) throws IOException{
