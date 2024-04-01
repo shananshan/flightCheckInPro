@@ -96,8 +96,8 @@ import java.util.Queue;
 public class View extends JFrame implements Observer,ActionListener{
 
     private CheckInDesk checkInDesk1, checkInDesk2, checkInDesk3;
-    private Secutiryqueue BSq;
-    private Secutiryqueue ESq;
+    private Securityqueue BSq;
+    private Securityqueue ESq;
     private JTextArea desk1TextArea, desk2TextArea, desk3TextArea;
     private JTextArea flight1TextArea, flight2TextArea, flight3TextArea;
     private JTextArea  security1TextArea, security2TextArea;
@@ -120,8 +120,8 @@ public class View extends JFrame implements Observer,ActionListener{
 	private JLabel label ;
 	private int xPos = 0;
     
-    public View(CheckInDesk checkInDesk1, CheckInDesk checkInDesk2, CheckInDesk checkInDesk3,Secutiryqueue BSq
-    ,Secutiryqueue ESq) {
+    public View(CheckInDesk checkInDesk1, CheckInDesk checkInDesk2, CheckInDesk checkInDesk3,Securityqueue BSq
+    ,Securityqueue ESq) {
         super("Check-In Desks Status");
         this.checkInDesk1 = checkInDesk1;
         this.checkInDesk2 = checkInDesk2;

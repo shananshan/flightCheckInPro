@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 public class Main{
     static WaitingPassQueue waitingPass = null;
 	static CheckInDesk checkInDesk1 = null, checkInDesk2 = null, checkInDesk3 = null;
-	static Secutiryqueue BSq = null, ESq = null ;
+	static Securityqueue BSq = null, ESq = null ;
     static Queue<Passenger> eClass = new LinkedList<>(), bClass = new LinkedList<>();
 	static FlightStats stats ;
     static Map<String, FlightStats> Map ;
@@ -47,8 +47,8 @@ public class Main{
         businessSecurityCheck = CheckInDesk.getBusinessDesk();
         eClass = WaitingPassQueue.getWEQueue();
         bClass = WaitingPassQueue.getWBQueue();
-        BSq = new Secutiryqueue(businessSecurityCheck, businessSecurityQueue, "Business");
-        ESq = new Secutiryqueue(economySecurityCheck, economySecurityQueue, "Economy");
+        BSq = new Securityqueue(businessSecurityCheck, businessSecurityQueue, "Business");
+        ESq = new Securityqueue(economySecurityCheck, economySecurityQueue, "Economy");
 
 
         ExecutorService executor = Executors.newFixedThreadPool(6);
