@@ -41,7 +41,7 @@ public class CheckInDesk implements Runnable {
     static List<Flight> flightLate = null;
     static String flightLate1 = "Flight Late: ";
     private final int flag;
-    private volatile Passenger currentPassenger; // 当前正在处理的乘客    
+    private volatile Passenger currentPassenger; // 褰撳墠姝ｅ湪澶勭悊鐨勪箻瀹�    
 
     LocalTime time = LocalTime.of(6,30,20,200);
 //    private List<Flight> flightList = fcs.getFlightList();
@@ -126,6 +126,8 @@ public class CheckInDesk implements Runnable {
 //        Passenger pass = economyCheckIn.poll();
 
         desk1Vacancy = false;
+        Logger.getInstance().log(pass.name + " is checking in...");
+
         Flight matchingFlight = findFlightByCode(pass.getFlightCode());
         LocalTime time = LocalTime.now(); // Current time
         time =  time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
@@ -152,11 +154,14 @@ public class CheckInDesk implements Runnable {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
                 float fee = matchingFlight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
+                Logger.getInstance().log("Checked In: " + pass.name);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
                 desk1Vacancy = true;
                 economySecurityCheck.add(pass);
-                FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize());     
+                FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize());
+                Logger.getInstance().log(pass.flightCode +"has included "+ pass.name);
+
                 
             } else {
                 warning = giveLateCheckInError(); // Generate a warning message for late check-in
@@ -182,6 +187,7 @@ public class CheckInDesk implements Runnable {
 ////    			System.out.println("flight no");
 //    		}
 //        }
+        
         notifyObservers();
         return economySecurityCheck;
     }
@@ -194,6 +200,8 @@ public class CheckInDesk implements Runnable {
         // Removes a passenger from the business check-in queue and processes their check-in.
 //        Passenger pass = businessCheckIn.poll();
         deskBVacancy = false;
+        Logger.getInstance().log(pass.name + " is checking in...");
+
         Flight matchingFlight = findFlightByCode(pass.getFlightCode());
         LocalTime time = LocalTime.now(); // Current time
         // Set a hypothetical current time
@@ -221,11 +229,13 @@ public class CheckInDesk implements Runnable {
                 // Calculate baggage fee, set check-in success and fee payment flags, and move to security check queue
                 float fee = matchingFlight.calulatefee(pass.getLuggageSize(), pass.getLuggageWeight());
                 pass.setCheckInSuccess(true);
+                Logger.getInstance().log("Checked In: " + pass.name);
                 pass.setFeePaymentSuccess(true);
                 pass.fee = fee;
                 deskBVacancy = true;
                 businessSecurityCheck.add(pass);
-                FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize());     
+                FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize()); 
+                Logger.getInstance().log(pass.flightCode +"has included "+ pass.name);
             } else {
                 warning = giveLateCheckInError(); // Generate a warning message for late check-in
                 deskBVacancy = true;
@@ -250,7 +260,7 @@ public class CheckInDesk implements Runnable {
 //////    			System.out.println("flight no");
 ////    		}
 //        }
-        Logger.getInstance().log(pass.name);
+
         notifyObservers();
         return businessSecurityCheck;
     }
@@ -279,45 +289,9 @@ public class CheckInDesk implements Runnable {
         return p.state();
     }
 
-    public static void economySecurityCheck(Queue<Passenger> economySecurityCheck, Queue<Passenger> economySecurityCheck1, Queue<Passenger> economySecurityCheck2, Queue<Passenger> economySecurityCheck3 ) {
-        Queue<Queue<Passenger>> queues = new ArrayBlockingQueue<>(3);
-        queues.add(economySecurityCheck1);
-        queues.add(economySecurityCheck2);
-        queues.add(economySecurityCheck3);
-//        notifyObservers();
-        while (!economySecurityCheck.isEmpty()) {
-            Queue<Passenger> shortestQueue = getShortestQueue(queues);
-            Passenger passenger = economySecurityCheck.poll();
-            if (passenger != null) {
-                shortestQueue.add(passenger);
-                System.out.println("Passenger added to shortest queue: " + passenger);
-                sleep(5000); // 绛夊緟5绉�
-            }
-        }
-    }
+  
 
-    public static Queue<Passenger> getShortestQueue(Queue<Queue<Passenger>> queues) {
-        Queue<Passenger> shortestQueue = null;
-        int minLength = Integer.MAX_VALUE;
-        for (Queue<Passenger> queue : queues) {
-            int length = queue.size();
-            if (length < minLength) {
-                minLength = length;
-                shortestQueue = queue;
-            }
-        }
-        return shortestQueue;
-    }
-
-    public static void sleep(int milliseconds) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
- // 鍚姩瀹氭椂浠诲姟锛屾瘡鍏娓呴櫎闃熼鍏冪礌
+ // 閸氼垰濮╃�规碍妞傛禒璇插閿涘本鐦￠崗顓狀潡濞撳懘娅庨梼鐔碱浕閸忓啰绀�
     public static void startTimer(Queue<Passenger> queue) {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -380,7 +354,7 @@ public class CheckInDesk implements Runnable {
                try {
                    generateEconomyDesk(currentPassenger, flightList);
                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
-//                   TimeUnit.SECONDS.sleep(1);//为了测试先用了固定时间
+//                   TimeUnit.SECONDS.sleep(1);//涓轰簡娴嬭瘯鍏堢敤浜嗗浐瀹氭椂闂�
                    System.out.println("Desk e is processing: " + currentPassenger);
                    System.out.println("Size of E waiting for security check is "+economySecurityCheck.size());
 
@@ -397,7 +371,7 @@ public class CheckInDesk implements Runnable {
                try {
                    generateBusinessDesk(currentPassenger, flightList);
                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
-//                   TimeUnit.SECONDS.sleep(3);//为了测试先使用固定时间
+//                   TimeUnit.SECONDS.sleep(3);//涓轰簡娴嬭瘯鍏堜娇鐢ㄥ浐瀹氭椂闂�
                    System.out.println("Size of B waiting for security check is "+businessSecurityCheck.size());
                    System.out.println("Desk b is processing: " + currentPassenger);
 
@@ -434,7 +408,7 @@ public class CheckInDesk implements Runnable {
 //                try {
 //                    economySecurityCheck1 = generateEconomyDesk(currentPassenger, flightList);
 //                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
-////                   TimeUnit.SECONDS.sleep(1);//为了测试先用了固定时间
+////                   TimeUnit.SECONDS.sleep(1);//涓轰簡娴嬭瘯鍏堢敤浜嗗浐瀹氭椂闂�
 //                    System.out.println("Desk e is processing: " + currentPassenger);
 //                    System.out.println("Size of E waiting for security check is "+economySecurityCheck.size());
 //
@@ -449,7 +423,7 @@ public class CheckInDesk implements Runnable {
 //                try {
 //                    economySecurityCheck2 = generateBusinessDesk(currentPassenger, flightList);
 //                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
-////                   TimeUnit.SECONDS.sleep(3);//为了测试先使用固定时间
+////                   TimeUnit.SECONDS.sleep(3);//涓轰簡娴嬭瘯鍏堜娇鐢ㄥ浐瀹氭椂闂�
 //                    System.out.println("Size of B waiting for security check is "+businessSecurityCheck.size());
 //                    System.out.println("Desk b is processing: " + currentPassenger);
 //
