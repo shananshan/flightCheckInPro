@@ -38,6 +38,7 @@ public class Main{
         flightList = fcs.getFlightList();
 
         CheckInDesk.preCheck(passengerList);
+        Logger.getInstance().log("All passengers who successfully checked in early have been credited to the corresponding flight.");
 
         waitingPass = new WaitingPassQueue(passengerList,eClass,bClass);
         checkInDesk1 = new CheckInDesk(1,bClass,eClass,flightList);
