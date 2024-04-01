@@ -10,6 +10,11 @@ public class Main{
 	static CheckInDesk checkInDesk1 = null;
 	static CheckInDesk checkInDesk2 = null;
 	static CheckInDesk checkInDesk3 = null;
+	static Queue<Passenger> economySecurityCheck= new LinkedList<>();
+    	static Queue<Passenger> businessSecurityCheck= new LinkedList<>();
+    
+    	static ConcurrentLinkedQueue<Passenger> businessSecurityQueue = new ConcurrentLinkedQueue<>();
+    	static ConcurrentLinkedQueue<Passenger> economySecurityQueue = new ConcurrentLinkedQueue<>();
 
 
     public static void main(String[] args) throws IOException{
@@ -40,11 +45,18 @@ public class Main{
         System.out.println("Class Type 1 Queue:"+bClass.size());
 
         ExecutorService executor = Executors.newFixedThreadPool(3);
+	economySecurityCheck =CheckInDesk.getEconomyDesk();
+        businessSecurityCheck = CheckInDesk.getBusinessDesk();
+        
+//     ExecutorService executor2 = Executors.newFixedThreadPool(2); // 创建两个线程
 
         // Create check-in desks
         executor.execute(checkInDesk1 );
         executor.execute(checkInDesk2 );
         executor.execute(checkInDesk3 );
+	 // 启动安检流程
+        executor.execute(new Secutiryqueue(businessSecurityCheck, businessSecurityQueue, "Business"));
+        executor.execute(new Secutiryqueue(economySecurityCheck, economySecurityQueue, "Economy"));
 
         executor.shutdown();
 
