@@ -106,9 +106,8 @@ public class View extends JFrame implements Observer,ActionListener{
     private JPanel mainPanel;
     private JPanel deskPanel;
     FlightCheckIn flightInfo;
-    String flightInfo1;
-    String flightInfo2;
-    String flightInfo3;
+    String flightInfo1, flightInfo2, flightInfo3;
+    String desk1Info,desk2Info,desk3Info;
 //    FlightStats stats ;
     Map<String, FlightStats> Map ;
 //    private static List<Observer> observers = new ArrayList<>();
@@ -163,11 +162,6 @@ public class View extends JFrame implements Observer,ActionListener{
         JPanel flightPanel = createFlightStatusPanel() ;
         mainPanel.add(flightPanel);
         
-       
-        
-        
-        
-        
         add(mainPanel);
         pack(); // 根据组件大小自动调整窗口大小
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -177,8 +171,8 @@ public class View extends JFrame implements Observer,ActionListener{
         // two waiting queue,one for Economy Class Lane, another for Business Class Priority Lane
         JPanel waitingPanel = new JPanel(new GridLayout(2, 1, 5, 10));
 
-        eWTextArea = new JTextArea(8, 20);
-        bWTextArea = new JTextArea(8, 20);
+        eWTextArea = new JTextArea(15, 20);
+        bWTextArea = new JTextArea(5, 20);
 
         JScrollPane scrollPane1 = new JScrollPane(eWTextArea);
         JScrollPane scrollPane2 = new JScrollPane(bWTextArea);
@@ -257,18 +251,33 @@ public class View extends JFrame implements Observer,ActionListener{
     @Override
     public void update() {
         // 更新Desk状态显示逻辑
-    	
-    	String ewInfo = queueToString(checkInDesk1.getEconomyqueue());
-    	String bwInfo = queueToString(checkInDesk3.getBusinessqueue());
+    	String ewInfo = queueToString(checkInDesk1.getEconomyQueue());
+    	String bwInfo = queueToString(checkInDesk3.getBusinessQueue());
     			
     	
-    	eWTextArea.setText("There are currently "+checkInDesk1.getEconomyqueue().size()+" people waiting in the Economy Class Lane:\n"+ewInfo);
-        bWTextArea.setText("There are currently "+checkInDesk3.getBusinessqueue().size()+" people waiting in the Business Class Priority Lane:\n"+bwInfo);
-    	
-        String desk1Info = passToString2(checkInDesk1.getCurrentPassenger());
-        String desk2Info = passToString2(checkInDesk2.getCurrentPassenger());
-        String desk3Info = passToString2(checkInDesk3.getCurrentPassenger());
-        
+    	eWTextArea.setText("There are currently "+checkInDesk1.getEconomyQueue().size()+" people waiting in the Economy Class Lane:\n"+ewInfo);
+        bWTextArea.setText("There are currently "+checkInDesk3.getBusinessQueue().size()+" people waiting in the Business Class Priority Lane:\n"+bwInfo);
+
+        if(checkInDesk1.getCurrentPassenger() == null) {
+            desk1Info = "Waiting...";
+        }else {
+            desk1Info = passToString2(checkInDesk1.getCurrentPassenger());
+        }
+        if(checkInDesk2.getCurrentPassenger() == null) {
+            desk2Info = "Waiting...";
+        }else {
+            desk2Info = passToString2(checkInDesk2.getCurrentPassenger());
+        }
+        if(checkInDesk3.getCurrentPassenger() == null) {
+            desk3Info = "Waiting...";
+        }else {
+            desk3Info = passToString2(checkInDesk3.getCurrentPassenger());
+        }
+
+        desk1TextArea.setText("Economic Desk1:\n" + desk1Info);
+        desk2TextArea.setText("Economic Desk2:\n"+ desk2Info);
+        desk3TextArea.setText("Business Desk:\n" + desk3Info);
+
         desk1TextArea.setText("Economic Desk1:\n" + desk1Info);
         desk2TextArea.setText("Economic Desk2:\n"+ desk2Info);
         desk3TextArea.setText("Business Desk:\n" + desk3Info);
@@ -307,7 +316,7 @@ public class View extends JFrame implements Observer,ActionListener{
         	security1TextArea.setText("Business Security:\n"+ securityInfo1);
         }
         if(ESq.getCurrentPassenger()==null) {
-        	security1TextArea.setText("Economic waiting...");
+        	security2TextArea.setText("Economic waiting...");
         }else {
         	
         	String securityInfo2 = securityToString(ESq.getCurrentPassenger());

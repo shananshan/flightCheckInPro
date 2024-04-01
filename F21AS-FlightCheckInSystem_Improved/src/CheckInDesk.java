@@ -9,9 +9,10 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-public class CheckInDesk implements Runnable{
+public class CheckInDesk implements Runnable {
     /*
     This class is used to simulate check-in process
     need a queue, include the waiting passengers' info: name, booking code, flight code, luggage[dimension, weight], state
@@ -61,17 +62,27 @@ public class CheckInDesk implements Runnable{
         }
     }
 
-    public static void separatePassengersByClassType(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
-        for (Passenger passenger : passengerList) {
-            if (passenger.classType.equals("1")) {
-                economy.offer(passenger);
-                
-            } else if (passenger.classType.equals("0")) {
-                business.offer(passenger);
-                
+    public static void preCheck(List<Passenger> passengerList) {
+        for (Passenger pass : passengerList) {
+            if (pass.checkInSuccess.equals(true)) {
+                FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize());
             }
         }
 
+    }
+    public static void separatePassengers(List<Passenger> passengerList, Queue<Passenger> economy, Queue<Passenger> business) {
+        while (economy.size()<10 || business.size()<10) {
+            Random random = new Random();
+            int index = random.nextInt(passengerList.size());
+            if (!passengerList.isEmpty()) {
+                Passenger passenger = passengerList.remove(index);
+                if (passenger.checkInSuccess.equals("FALSE") && passenger.classType.equals("1")) {
+                    economy.offer(passenger);
+                } else if (passenger.checkInSuccess.equals("FALSE") && passenger.classType.equals("0")) {
+                    business.offer(passenger);
+                }
+            }
+        }
     }
     public static void separatePassengerByClassType(Passenger passenger, ArrayBlockingQueue<Passenger> q1, ArrayBlockingQueue<Passenger> q2) {
         if (q1.size() < q2.size()) {
@@ -80,9 +91,10 @@ public class CheckInDesk implements Runnable{
             q2.offer(passenger);
         }
     }
+
     
     public static String checkFlightOnTime(List<Flight> flightOnTime){
-        for(Flight flight:flightOnTime) {
+        for(Flight flight: flightOnTime) {
             LocalTime time = LocalTime.now(); // Current time
             time.withHour(6).withMinute(30).withSecond(20); // Set a hypothetical current time
             LocalTime flightTime =fcs.getFlightTime(flightOnTime,flight.flightCode);
@@ -131,7 +143,7 @@ public class CheckInDesk implements Runnable{
                     System.out.println("Check-in success set to false due to timeout.");
                 }
             }
-        }, 60000); // 60 seconds
+        }, 11000); // 60 seconds
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (matchingFlight != null && !pass.getFeePaymentSuccess()) {
@@ -200,7 +212,7 @@ public class CheckInDesk implements Runnable{
                     System.out.println("Check-in success set to false due to timeout.");
                 }
             }
-        }, 60000); // 60 seconds
+        }, 11000); // 60 seconds
 
         // Check if the passenger's check-in and fee payment are not yet completed
         if (matchingFlight != null && !pass.getFeePaymentSuccess()) {
@@ -320,36 +332,41 @@ public class CheckInDesk implements Runnable{
     }
 
     public CheckInDesk(int flag, Queue<Passenger> businessCheckIn,Queue<Passenger> economyCheckIn, List<Flight> flightList) {
-//        this.passQueue = passQueue;
         this.businessCheckIn = businessCheckIn;
         this.flightList = flightList;
         this.economyCheckIn = economyCheckIn;
-//		this.passQueue = null;
         this.flag = flag;
 
     }
-    
-    public static Queue<Passenger> getEconomyqueue(){
-        return economyCheckIn;
 
+//    public synchronized Passenger getEWaitingPass() {
+//        return economyCheckIn;
+//    }
+//
+//    public synchronized Passenger getBWaitingPass() {
+//        return currentPassenger;
+//    }
+
+    public static Queue<Passenger> getEconomyQueue(){
+        return economyCheckIn;
     }
-    
+
+    public static Queue<Passenger> getBusinessQueue(){
+        return businessCheckIn;
+    }
     public static Queue<Passenger> getEconomyDesk(){
         return economySecurityCheck;
-
     }
    
-   public static Queue<Passenger> getBusinessDesk(){
-       return businessSecurityCheck;
-
-   }
-   public synchronized Passenger getCurrentPassenger() {
-
-       return currentPassenger;
-   }
-public synchronized FlightCheckIn getFighthold() {
-       return FlightHold;
-   }
+    public static Queue<Passenger> getBusinessDesk(){
+        return businessSecurityCheck;
+    }
+    public synchronized Passenger getCurrentPassenger() {
+        return currentPassenger;
+    }
+    public synchronized FlightCheckIn getFighthold() {
+        return FlightHold;
+    }
 
 
     @Override
@@ -370,6 +387,8 @@ public synchronized FlightCheckIn getFighthold() {
                } catch (InterruptedException e) {
                    throw new RuntimeException(e);
                }
+           }else{
+               currentPassenger = null;
            }
            if (flag == 0 && !businessCheckIn.isEmpty()) {
                synchronized (this) {
@@ -385,6 +404,8 @@ public synchronized FlightCheckIn getFighthold() {
                } catch (InterruptedException e) {
                    throw new RuntimeException(e);
                }
+           }else{
+               currentPassenger = null;
            }
            try {
                FlightHold.printFlightStats();
@@ -403,4 +424,53 @@ public synchronized FlightCheckIn getFighthold() {
         }
     }
 
+//    @Override
+//    public Queue<Passenger> call() throws Exception {
+//        while(true) {
+//            if (flag == 1 && !economyCheckIn.isEmpty()) {
+//                synchronized (this) {
+//                    currentPassenger = economyCheckIn.poll();
+//                }
+//                try {
+//                    economySecurityCheck1 = generateEconomyDesk(currentPassenger, flightList);
+//                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
+////                   TimeUnit.SECONDS.sleep(1);//为了测试先用了固定时间
+//                    System.out.println("Desk e is processing: " + currentPassenger);
+//                    System.out.println("Size of E waiting for security check is "+economySecurityCheck.size());
+//
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//            if (flag == 0 && !businessCheckIn.isEmpty()) {
+//                synchronized (this) {
+//                    currentPassenger = businessCheckIn.poll();
+//                }
+//                try {
+//                    economySecurityCheck2 = generateBusinessDesk(currentPassenger, flightList);
+//                    TimeUnit.SECONDS.sleep(rand.nextInt(10) + 0);
+////                   TimeUnit.SECONDS.sleep(3);//为了测试先使用固定时间
+//                    System.out.println("Size of B waiting for security check is "+businessSecurityCheck.size());
+//                    System.out.println("Desk b is processing: " + currentPassenger);
+//
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//            try {
+//                FlightHold.printFlightStats();
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            if (businessCheckIn.isEmpty() || economyCheckIn.isEmpty()) {
+//                try {
+//                    TimeUnit.SECONDS.sleep(1);
+//                    System.out.println("Wait for passengers...");
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }
+//    }
 }

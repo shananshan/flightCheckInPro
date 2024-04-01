@@ -28,7 +28,7 @@ public class ThreadTest {
         flightList = fcs.getFlightList();
 
         // Separate passengers by class type
-        CheckInDesk.separatePassengersByClassType(passengerList, eClass, bClass);
+//        CheckInDesk.separatePassengersByClassType(passengerList, eClass, bClass);
         System.out.println("Class Type 0 Queue:"+eClass.size());
         System.out.println("Class Type 1 Queue:"+bClass.size());
 //
@@ -43,6 +43,7 @@ public class ThreadTest {
         executor.execute(deske1);
         executor.execute(deske2);
         executor.execute(deskb);
+
 
         executor.shutdown();
     }

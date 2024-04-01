@@ -31,8 +31,8 @@ public class Passenger {
     private void generateLuggageSize() {
         Random random = new Random();
         int length = 5 + random.nextInt(96); // 5-100
-	int width = 5 + random.nextInt(96);
-	int height = 5 + random.nextInt(96);
+		int width = 5 + random.nextInt(96);
+		int height = 5 + random.nextInt(96);
 		luggageSize = length * width * height;
 		luggageDimensions = length + " cm x " + width + " cm x " + height + " cm";
     }
