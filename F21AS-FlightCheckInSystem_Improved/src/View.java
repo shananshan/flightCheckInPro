@@ -63,8 +63,8 @@
 //		// TODO Auto-generated method stub
 //		System.out.println("-------------------------------------------------");
 //		 // 假设有方法将队列转换为字符串表示
-//		String economyQueueInfo = passToString(CheckInDesk.getEconomyDesk());
-//		String businessQueueInfo = passToString(CheckInDesk.getBusinessDesk());
+//		String economyQueueInfo = queueToString(CheckInDesk.getEconomyDesk());
+//		String businessQueueInfo = queueToString(CheckInDesk.getBusinessDesk());
 //
 //		// 更新GUI组件显示的队列信息
 //		economyQueueTextArea.setText(economyQueueInfo);
@@ -73,7 +73,7 @@
 //		 System.out.println(businessQueueInfo);
 //			}
 //
-//	private String passToString(Queue<Passenger> queue) {
+//	private String queueToString(Queue<Passenger> queue) {
 //	    StringBuilder sb = new StringBuilder();
 //	    for (Passenger p : queue) {
 //	        sb.append(p.getName()).append(" - ").append(p.getFlightCode()).append("\n");
@@ -83,64 +83,96 @@
 //}
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
 
-public class View extends JFrame implements Observer {
+public class View extends JFrame implements Observer,ActionListener{
 
     private CheckInDesk checkInDesk1, checkInDesk2, checkInDesk3;
-    private JTextArea eWTextArea, bWTextArea;
+    private Secutiryqueue BSq;
+    private Secutiryqueue ESq;
     private JTextArea desk1TextArea, desk2TextArea, desk3TextArea;
     private JTextArea flight1TextArea, flight2TextArea, flight3TextArea;
+    private JTextArea  security1TextArea, security2TextArea;
+    private JTextArea eWTextArea, bWTextArea;
     private JTextArea[] flight;
     private JPanel mainPanel;
-//    private JPanel deskPanel;
-//    FlightCheckIn flightInfo1;
-    String flightInfo1, flightInfo2, flightInfo3;
-    String eWaitingInfo, bWaitingInfo;
+    private JPanel deskPanel;
+    FlightCheckIn flightInfo;
+    String flightInfo1;
+    String flightInfo2;
+    String flightInfo3;
+//    FlightStats stats ;
     Map<String, FlightStats> Map ;
-
+//    private static List<Observer> observers = new ArrayList<>();
+    
+    
+    
     // Assume these labels are defined elsewhere in your class
     private JLabel desk1Label, desk2Label, desk3Label;
-
-    public View(CheckInDesk checkInDesk1, CheckInDesk checkInDesk2, CheckInDesk checkInDesk3) {
+	private Timer timer;
+	private JLabel label ;
+	private int xPos = 0;
+    
+    public View(CheckInDesk checkInDesk1, CheckInDesk checkInDesk2, CheckInDesk checkInDesk3,Secutiryqueue BSq
+    ,Secutiryqueue ESq) {
         super("Check-In Desks Status");
         this.checkInDesk1 = checkInDesk1;
         this.checkInDesk2 = checkInDesk2;
         this.checkInDesk3 = checkInDesk3;
+        this.BSq = BSq;
+        this.ESq = ESq;
 
         this.checkInDesk1.addObserver(this);
         this.checkInDesk2.addObserver(this);
         this.checkInDesk3.addObserver(this);
-
+        this.BSq.addObserver(this);
+        this.BSq.addObserver(this); 
+        
         initUI();
     }
-
+    
 
     private void initUI() {
-
+    	
     	mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
+        
+        label = new JLabel("Welcome to AirPort");
+        label.setFont(new Font("Arial", Font.PLAIN, 20));
+        mainPanel.add(label);
+        timer = new Timer(20,this); // 设置定时器，每50毫秒触发一次
+        timer.start(); // 启动定时器
+        
         JPanel waitingPanel = createWaitingPanel();
         mainPanel.add(waitingPanel);
-
-        JPanel deskPanel = createDeskPanel();
+        
+        deskPanel = createDeskPanel();
         mainPanel.add(deskPanel);
-
+        
+        JPanel SecurityPanel =createSecurityDeskPanel()  ;
+        mainPanel.add(SecurityPanel);
+        
         JPanel flightPanel = createFlightStatusPanel() ;
         mainPanel.add(flightPanel);
-
+        
+       
+        
+        
+        
+        
         add(mainPanel);
         pack(); // 根据组件大小自动调整窗口大小
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
-
     private JPanel createWaitingPanel() {
         // two waiting queue,one for Economy Class Lane, another for Business Class Priority Lane
         JPanel waitingPanel = new JPanel(new GridLayout(2, 1, 5, 10));
@@ -151,8 +183,7 @@ public class View extends JFrame implements Observer {
         JScrollPane scrollPane1 = new JScrollPane(eWTextArea);
         JScrollPane scrollPane2 = new JScrollPane(bWTextArea);
 
-        eWTextArea.setText("There are currently "+" people waiting in the Economy Class Lane:\n");
-        bWTextArea.setText("There are currently "+" people waiting in the Business Class Priority Lane:\n");
+      
 
         waitingPanel.add(scrollPane1);
         waitingPanel.add(scrollPane2);
@@ -164,9 +195,9 @@ public class View extends JFrame implements Observer {
     private JPanel createDeskPanel() {
     	JPanel countersPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // 三个柜台横向布局
 
-        desk1TextArea = new JTextArea(5, 20);
-        desk2TextArea = new JTextArea(5, 20);
-        desk3TextArea = new JTextArea(5, 20);
+        desk1TextArea = new JTextArea(6, 25);
+        desk2TextArea = new JTextArea(6, 25);
+        desk3TextArea = new JTextArea(6, 25);
 
         JScrollPane scrollPane1 = new JScrollPane(desk1TextArea);
         JScrollPane scrollPane2 = new JScrollPane(desk2TextArea);
@@ -174,118 +205,162 @@ public class View extends JFrame implements Observer {
 
         countersPanel.add(scrollPane1);
         countersPanel.add(scrollPane2);
-//        countersPanel.add(new JLabel("Desk 3 (Business):"));
         countersPanel.add(scrollPane3);
         add(countersPanel, BorderLayout.CENTER);
-
+        
 		return countersPanel;
-
-
+    	
+    	
     }
     private JPanel createFlightStatusPanel() {
         // Add desk info here
+       
           JPanel panel = new JPanel(new GridLayout(1, 3, 10, 10)); // 三个柜台横向布局
-          flight1TextArea = new JTextArea(5, 20);
-          flight2TextArea = new JTextArea(5, 20);
-          flight3TextArea = new JTextArea(5, 20);
-
+          flight1TextArea = new JTextArea(6, 25);
+          flight2TextArea = new JTextArea(6, 25);
+          flight3TextArea = new JTextArea(6, 25);
+          
           JScrollPane scrollPane1 = new JScrollPane(flight1TextArea);
           JScrollPane scrollPane2 = new JScrollPane(flight2TextArea);
           JScrollPane scrollPane3 = new JScrollPane(flight3TextArea);
-
+          
           panel.add(scrollPane1);
           panel.add(scrollPane2);
           panel.add(scrollPane3);
-
+         
           add(panel, BorderLayout.CENTER);
+         
+          return panel;
+      }
+    
+    private JPanel createSecurityDeskPanel() {
+        // Add desk info here
+       
+          JPanel panel = new JPanel(new GridLayout(1, 2, 10, 10)); // 三个柜台横向布局
+          security1TextArea = new JTextArea(6, 25);
+          security2TextArea= new JTextArea(6, 25);
+          
+          
+          JScrollPane scrollPane1 = new JScrollPane(security1TextArea);
+          JScrollPane scrollPane2 = new JScrollPane(security2TextArea);
+          
+          
+          panel.add(scrollPane1);
+          panel.add(scrollPane2);
 
+         
+          add(panel, BorderLayout.CENTER);
+         
           return panel;
       }
 
     @Override
     public void update() {
         // 更新Desk状态显示逻辑
-        eWaitingInfo = queueToString(checkInDesk1.getEconomyQueue());
-        bWaitingInfo = queueToString(checkInDesk3.getBusinessQueue());
-        String desk1Info = passToString(checkInDesk1.getCurrentPassenger());
-        String desk2Info = passToString(checkInDesk2.getCurrentPassenger());
-        String desk3Info = passToString(checkInDesk3.getCurrentPassenger());
-        try {
-			flightInfo1 = queueToString1(checkInDesk1.getFighthold());
-			flightInfo2 = queueToString1(checkInDesk2.getFighthold());
-			flightInfo3 = queueToString1(checkInDesk3.getFighthold());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-        eWTextArea.setText("There are currently "+" people waiting in the Economy Class Lane:\n"+eWaitingInfo);
-        bWTextArea.setText("There are currently "+" people waiting in the Business Class Priority Lane:\n"+bWaitingInfo);
-
-        desk1TextArea.setText("Desk1:\n" + desk1Info);
-        desk2TextArea.setText("Desk2:\n"+ desk2Info);
-        desk3TextArea.setText("Desk3:\n" + desk3Info);
-
-        flight1TextArea.setText(flightInfo1);
-        flight2TextArea.setText(flightInfo2);
-        flight3TextArea.setText(flightInfo3);
-//
-//        List<String> flightCodes = Arrays.asList("DA-4562", "PA-5723", "BI-3892");
-//        Map = flightInfo.getFlightMap();
-//        for (String flightcode : flightCodes) {
-//            String flightStats = getFlightStatsString(flightcode);
-//            // 假设有方法来获取对应航班号的文本区域
-//            JTextArea textArea = getTextAreaForFlight(flightcode);
-//            textArea.setText(flightStats);
-//        }
-
-//        StringBuilder statusBuilder = new StringBuilder();
-//        for(Flight flight : flightList) {  // 假设flightList存储了所有航班对象
-//            String status = flight.getCurrentStatus();  // 获取当前航班状态的方法
-//            statusBuilder.append(status).append("\n");  // 将每个航班的状态添加到构建器
-//        }
-//        flightStatusTextArea.setText(statusBuilder.toString());
-
-
-
-    }
-
-//    private String getFlightStatsString(String flightCode) {
-//        FlightStats stats = FlightCheckIn.getFlightStats(flightCode); // 获取特定航班的统计信息
-//        // 格式化航班状态信息为字符串
-//        return String.format("Flight %s: %d passengers, %f kg total weight, %f m^3 total volume",
-//                             flightCode, stats.getPassengerCount(), stats.getTotalWeight(), stats.getTotalVolume());
-//    }
-    private String queueToString(Queue<Passenger> queue){
-        StringBuilder wairingPassengers = new StringBuilder();
-        for (Passenger pass : queue) {
-            wairingPassengers.append(passToString(pass));
-        }
-        return wairingPassengers.toString();
-    }
-
-    private String passToString(Passenger p) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(p.getName()).append(" - ").append(p.getFlightCode()).append(" - ").append(p.getCheckInSuccess()).append("\n");
-        return sb.toString();
-    }
-
-    public String queueToString1(FlightCheckIn f) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        f.getFlightMap().forEach((flightNumber, stats) -> {
-            sb.append("Flight Number: ").append(flightNumber).append("\n");
-            sb.append("Passenger Count: ").append(stats.getPassengerCount()).append("\n");
-//            sb.append("Total Weight: ").append(stats.getTotalWeight()).append(" kg\n");
-//            sb.append("Total Volume: ").append(stats.getTotalVolume()).append(" cubic meters\n");
-            sb.append("Weight Hold: ").append(stats.getWeightHold(flightNumber)).append("%\n");
-			sb.append("Volume Hold: ").append(stats.getSizeHold(flightNumber)).append("%\n\n");
-        });
-        return sb.toString();
-    }
-
-    
-   
+    	
+    	String ewInfo = queueToString(checkInDesk1.getEconomyqueue());
+    	String bwInfo = queueToString(checkInDesk3.getBusinessqueue());
+    			
+    	
+    	eWTextArea.setText("There are currently "+checkInDesk1.getEconomyqueue().size()+" people waiting in the Economy Class Lane:\n"+ewInfo);
+        bWTextArea.setText("There are currently "+checkInDesk3.getBusinessqueue().size()+" people waiting in the Business Class Priority Lane:\n"+bwInfo);
+    	
+        String desk1Info = passToString2(checkInDesk1.getCurrentPassenger());
+        String desk2Info = passToString2(checkInDesk2.getCurrentPassenger());
+        String desk3Info = passToString2(checkInDesk3.getCurrentPassenger());
+        
+        desk1TextArea.setText("Economic Desk1:\n" + desk1Info);
+        desk2TextArea.setText("Economic Desk2:\n"+ desk2Info);
+        desk3TextArea.setText("Business Desk:\n" + desk3Info);
+        
+        flightInfo = checkInDesk1.getFighthold();
   
+        List<String> flightCodes = Arrays.asList("DA-4562", "PA-5723", "BI-3892");
+        Map = flightInfo.getFlightMap();
+        for (String flightcode : flightCodes) {
+        	FlightStats flightStats = flightInfo.getFlightStats(Map,flightcode); 	
+        	if(flightStats == null) {
+        		flight1TextArea.setText("Economic waiting...");
+        		flight2TextArea.setText("Economic waiting...");
+        		flight3TextArea.setText("Business waiting...");
+        	}else {
+        	if(flightcode.equals("DA-4562")) {
+        		String a = String.format("Flight %s\n %d checked of 120\n ",flightcode, flightStats.getPassengerCount());	
+        		String fs = FlightToString(flightcode,flightStats);
+        		flight1TextArea.setText(a + fs);
+        	}else if(flightcode.equals("PA-5723")) {
+        		String b = String.format("Flight %s\n %d checked of 200\n ",flightcode, flightStats.getPassengerCount());
+        		String fs = FlightToString(flightcode,flightStats);
+        		flight2TextArea.setText(b + fs);
+        	}else if(flightcode.equals("BI-3892")) {
+        		String c = String.format("Flight %s\n %d checked of 300\n ",flightcode, flightStats.getPassengerCount());
+        		String fs = FlightToString(flightcode,flightStats);
+        		flight3TextArea.setText(c+fs);
+        	}
+        	
+        	}
+        }
+        if(BSq.getCurrentPassenger() == null ) {
+        	security1TextArea.setText("Business waiting...");
+        }else {
+        	String securityInfo1 = securityToString(BSq.getCurrentPassenger());
+        	security1TextArea.setText("Business Security:\n"+ securityInfo1);
+        }
+        if(ESq.getCurrentPassenger()==null) {
+        	security1TextArea.setText("Economic waiting...");
+        }else {
+        	
+        	String securityInfo2 = securityToString(ESq.getCurrentPassenger());
+       	 	security2TextArea.setText("Economic Security:\n" + securityInfo2);
+        }
+    		
+       
+   
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        // 当定时器触发时，更新标签的位置
+        xPos++;
+        label.setLocation(xPos, 0);
+
+        // 当标签移出窗口边界时，将其移回窗口左侧
+        if (xPos >= getWidth()) {
+            xPos = -label.getWidth();
+        }
+    }
+
+    private String passToString1(Passenger p) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(p.getName()).append(" - ").append(p.getFlightCode()).append(" - ").append("Luggage Size: "+p.getLuggageDimensions()).append(" - ").append("Weight:").append(p.getLuggageWeight()).append("kg").append("\n");
+        return sb.toString();
+    }
+
+    private String passToString2(Passenger p) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(p.getName()).append(" - ").append(p.getFlightCode()).append("\n").append("Luggage Size: "+p.getLuggageDimensions()).append("\n").append("Weight:").append(p.getLuggageWeight()+"KG").append("\n").append("Fee: "+p.getFee());
+        return sb.toString();
+    }
+    
+    private String securityToString(Passenger p) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(p.getName()).append(" - ").append(p.getFlightCode()).append("\n");
+        return sb.toString();
+    }
+    
+    
+    
+    private String FlightToString(String fc, FlightStats fs) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(fs.getSizeHold(fc)+"% of total Volume").append("\n").append(fs.getWeightHold(fc) + "% of total Weight");
+        return sb.toString();
+    }
+    
+    private String queueToString(Queue<Passenger> queue){
+    	StringBuilder wairingPassengers = new StringBuilder();
+    	for (Passenger pass : queue) {
+    	wairingPassengers.append(passToString1(pass));
+    	}
+    	return wairingPassengers.toString();
+    	}
+   
 }
-
-
