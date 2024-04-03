@@ -28,13 +28,14 @@ public class Passenger {
         luggageWeight = generateLuggageWeight();
     }
 
+    // Randomly generated baggage length/width/height: 5 - 80 cm
     private void generateLuggageSize() {
         Random random = new Random();
-        int length = 5 + random.nextInt(96); // 5-100
-		int width = 5 + random.nextInt(96);
-		int height = 5 + random.nextInt(96);
-		luggageSize = length * width * height;
-		luggageDimensions = length + " cm x " + width + " cm x " + height + " cm";
+        int length = 5 + random.nextInt(76); 
+	int width = 5 + random.nextInt(76);
+	int height = 5 + random.nextInt(76);
+	luggageSize = length * width * height;
+	luggageDimensions = length + " cm x " + width + " cm x " + height + " cm";
     }
 
 	public String getLuggageDimensions() {
