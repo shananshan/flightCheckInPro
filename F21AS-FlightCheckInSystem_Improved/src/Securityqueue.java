@@ -46,10 +46,14 @@ public class Securityqueue implements Runnable {
                 currentPassenger = checkInQueue.poll();
             }
             if (currentPassenger != null) {
+//            	if (securityQueue.isEmpty()==false){
                 // Adds the current passenger to the security queue after processing.
                 securityQueue.offer(currentPassenger);
                 // Notifies observers about the change (i.e., a new passenger has been added to the security queue).
                 notifyObservers();
+            }else {
+            	currentPassenger = null;
+            	notifyObservers();
             }
             try {
                 Thread.sleep(1000); // Simulates the time required for security check.
