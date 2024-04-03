@@ -3,26 +3,28 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-//需要记录日志的地方调用 Logger.getInstance().log("Your log message");
+// Call Logger.getInstance().log("Your log message") wherever you need to log.
 public class Logger {
     private static Logger instance;
     private static final String LOG_FILE_PATH = "log.txt";
 
-    // 私有构造函数，防止实例化
+    // Private constructor to prevent instantiation
     private Logger() {
     }
 
-    // 获取 Logger 实例
+    // Get Logger instance
     public static Logger getInstance() {
         if (instance == null) {
             instance = new Logger();
+            // Clear the content of the existing log file
+            clearLogFile();
         }
         return instance;
     }
 
-    // 记录日志信息
+    // Log the message
     public synchronized void log(String message) {
-        try (FileWriter writer = new FileWriter(LOG_FILE_PATH, true)) {
+        try (FileWriter writer = new FileWriter(LOG_FILE_PATH, true)) { // Change this true to false to rewrite instead of append
             LocalDateTime now = LocalDateTime.now();
             String formattedDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             writer.write(formattedDateTime + " - " + message + "\n");
@@ -30,4 +32,14 @@ public class Logger {
             e.printStackTrace();
         }
     }
+
+    // Clear the content of the log file
+    private static void clearLogFile() {
+        try {
+            new FileWriter(LOG_FILE_PATH, false).close(); // The false parameter will clear the file content
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
