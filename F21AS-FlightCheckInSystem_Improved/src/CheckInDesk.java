@@ -160,7 +160,7 @@ public class CheckInDesk implements Runnable {
                 desk1Vacancy = true;
                 economySecurityCheck.add(pass);
                 FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize());
-                Logger.getInstance().log(pass.flightCode +"has included "+ pass.name);
+                Logger.getInstance().log(pass.flightCode +" has included "+ pass.name);
 
                 
             } else {
@@ -235,7 +235,7 @@ public class CheckInDesk implements Runnable {
                 deskBVacancy = true;
                 businessSecurityCheck.add(pass);
                 FlightHold.checkInPassenger(pass.flightCode, pass.getLuggageWeight(), pass.getLuggageSize()); 
-                Logger.getInstance().log(pass.flightCode +"has included "+ pass.name);
+                Logger.getInstance().log(pass.flightCode +" has included "+ pass.name);
             } else {
                 warning = giveLateCheckInError(); // Generate a warning message for late check-in
                 deskBVacancy = true;
