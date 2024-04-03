@@ -1,8 +1,6 @@
 import java.io.IOException;
-import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,7 +83,7 @@ public class Main{
         // security process
         executor.execute(BSq);
         executor.execute(ESq);
-        // use line  or line  to shut down threads
+        // use line 87 or line 88 to shut down threads
 //        scheduleShutdown(executor, checkInView,60, TimeUnit.SECONDS);
         executor.shutdown();
     }
