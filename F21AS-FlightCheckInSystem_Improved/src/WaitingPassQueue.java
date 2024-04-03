@@ -6,7 +6,6 @@ import java.util.Random;
 public class WaitingPassQueue implements Runnable{
 
     static ReadFiles fcs = new ReadFiles();
-    //    private final Queue<Passenger> passQueue;
     private List<Passenger> passengerList = fcs.getPassengerList();
     static Queue<Passenger> economy = new LinkedList<>();
     static Queue<Passenger> business = new LinkedList<>();
