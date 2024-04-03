@@ -1,0 +1,240 @@
+@startuml
+class WaitingPassQueue {
+~ {static} ReadFiles fcs
+- List<Passenger> passengerList
+~ {static} Queue<Passenger> economy
+~ {static} Queue<Passenger> business
++ {static} void separatePassengers(List<Passenger>,Queue<Passenger>,Queue<Passenger>)
++ {static} Queue<Passenger> getWEQueue()
++ {static} Queue<Passenger> getWBQueue()
++ void run()
+}
+
+
+class Passenger {
+~ String name
+~ String firstName
+~ String lastName
+~ String flightCode
+~ int luggageSize
+~ Float luggageWeight
+~ Boolean checkInSuccess
+~ Boolean feePaymentSuccess
+~ String classType
+~ String luggageDimensions
++ float fee
+- void generateLuggageSize()
++ String getLuggageDimensions()
+- float generateLuggageWeight()
++ boolean state()
++ String getName()
++ String getFirstName()
++ String getLastName()
++ String getFlightCode()
++ int getLuggageSize()
++ Float getLuggageWeight()
++ Float getFee()
++ Boolean getCheckInSuccess()
++ boolean getFeePaymentSuccess()
++ void setCheckInSuccess(boolean)
++ void setFeePaymentSuccess(boolean)
++ String toString()
+}
+
+
+class Main {
+~ {static} WaitingPassQueue waitingPass
+~ {static} CheckInDesk checkInDesk1
+~ {static} Securityqueue BSq
+~ {static} Queue<Passenger> eClass
+~ {static} FlightStats stats
+~ {static} Map<String,FlightStats> Map
+~ String eWaitingInfo
+~ {static} FlightCheckIn flightInfo
+~ {static} FlightCheckIn FlightHold
+~ {static} Queue<Passenger> economySecurityCheck
+~ {static} Queue<Passenger> businessSecurityQueue
++ {static} void main(String[])
+}
+
+
+interface Observer {
+~ void update()
+}
+
+class ReadFiles {
+~ {static} List<Passenger> passengerList
+~ {static} List<Flight> flightList
+~ {static} LocalTime flightTime
++ void readPassengers(String)
++ void readFlights(String)
++ List<Passenger> getPassengerList()
++ List<Flight> getFlightList()
++ {static} Flight getFlight(List<Flight>,String)
++ {static} LocalTime getFlightTime(List<Flight>,String)
+}
+
+
+class ControllerDesk {
+- View checkInView
+- CheckInDesk checkInDesk1
+- CheckInDesk checkInDesk2
+- CheckInDesk checkInDesk3
+- Securityqueue BSq
+- Securityqueue ESq
+}
+
+class FlightStats {
+~ int passengerCount
+~ double totalWeight
+~ double totalVolume
+~ double weighthold
+~ double sizehold
+~ double passengerhold
+~ ReadFiles fcs
++ void addPassenger(double,double)
++ int getPassengerCount()
++ double getTotalWeight()
++ double getTotalVolume()
++ double getWeightHold(String)
++ double getSizeHold(String)
++ double getPassengerHold(String)
++ double getMaxLuggageHold(String)
+}
+
+
+class FlightCheckIn {
+- Map<String,FlightStats> flightMap
+~ ReadFiles fcs
++ void checkInPassenger(String,double,double)
++ {static} FlightStats getFlightStats(Map<String,FlightStats>,String)
++ Map<String,FlightStats> getFlightMap()
++ void printFlightStats()
+}
+
+
+class CheckInDesk {
+- {static} boolean desk1Vacancy
+- {static} boolean deskBVacancy
+~ {static} Queue<Passenger> economyCheckIn
+~ {static} Queue<Passenger> economySecurityCheck
+~ {static} ReadFiles fcs
+- {static} List<Flight> flightList
+~ {static} FlightCheckIn FlightHold
+- {static} List<Observer> observers
+~ {static} List<Flight> flightOnTime
+~ {static} List<Flight> flightLate
+~ {static} String flightLate1
+- int flag
+- Passenger currentPassenger
+~ Random rand
++ void addObserver(Observer)
++ void removeObserver(Observer)
+# {static} void notifyObservers()
++ {static} void preCheck(List<Passenger>)
+- {static} Flight findFlightByCode(String)
++ {static} Queue<Passenger> generateEconomyDesk(Passenger,List<Flight>)
++ {static} Queue<Passenger> generateBusinessDesk(Passenger,List<Flight>)
+- {static} String giveLateCheckInError()
+- {static} String giveRepeatCheckInError()
++ {static} boolean checkAPassenger(Passenger)
++ {static} Queue<Passenger> getEconomyQueue()
++ {static} Queue<Passenger> getBusinessQueue()
++ {static} Queue<Passenger> getEconomyDesk()
++ {static} Queue<Passenger> getBusinessDesk()
++ Passenger getCurrentPassenger()
++ FlightCheckIn getFighthold()
++ void run()
+}
+
+
+class Logger {
+- {static} Logger instance
+- {static} String LOG_FILE_PATH
++ {static} Logger getInstance()
++ void log(String)
+- {static} void clearLogFile()
+}
+
+
+class Flight {
+~ int numOfPassengers
+~ int maximumPassengers
+~ double maximumBaggageWeight
+~ double maxbaggageVolume
+~ double extraVolumeFee
+~ double extraWeightFee
+~ {static} double maxFlightVolume
+~ {static} double maxFlightWeight
+~ String flightCode
+~ String destination
+~ String carrier
+~ String TakeoffTime
+~ List<Passenger> passengerList
++ float calulatefee(float,float)
++ {static} float calulateload(float,float)
++ {static} double getmaximumBaggageWeight()
++ {static} double getmaxbaggageVolumet()
++ double getmaxpassenger()
++ String gettakeoftime()
++ String toString()
+}
+
+
+class View {
+- CheckInDesk checkInDesk1
+- Securityqueue BSq
+- Securityqueue ESq
+- JTextArea desk1TextArea
+- JTextArea flight1TextArea
+- JTextArea security1TextArea
+- JTextArea eWTextArea
+- JTextArea[] flight
+- JPanel mainPanel
+- JPanel deskPanel
+~ FlightCheckIn flightInfo
+~ String flightInfo1
+~ String desk1Info
+~ Map<String,FlightStats> Map
+- JLabel desk1Label
+- Timer timer
+- JLabel label
+- int xPos
+- void initUI()
+- JPanel createWaitingPanel()
+- JPanel createDeskPanel()
+- JPanel createFlightStatusPanel()
+- JPanel createSecurityDeskPanel()
++ void update()
++ void actionPerformed(ActionEvent)
+- String passToString1(Passenger)
+- String passToString2(Passenger)
+- String securityToString(Passenger)
+- String FlightToString(String,FlightStats)
+- String queueToString(Queue<Passenger>)
+}
+
+
+class Securityqueue {
+- Queue<Passenger> checkInQueue
+- Queue<Passenger> securityQueue
+- String type
+- {static} List<Observer> observers
+- Passenger currentPassenger
++ void addObserver(Observer)
++ void removeObserver(Observer)
+# {static} void notifyObservers()
++ Passenger getCurrentPassenger()
++ void run()
+}
+
+
+
+
+Runnable <|.. WaitingPassQueue
+Runnable <|.. CheckInDesk
+Observer <|.. View
+java.awt.event.ActionListener <|.. View
+JFrame <|-- View
+Runnable <|.. Securityqueue
+@enduml
