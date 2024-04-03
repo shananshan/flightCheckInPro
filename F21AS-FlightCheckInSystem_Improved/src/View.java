@@ -120,7 +120,7 @@ public class View extends JFrame implements Observer,ActionListener{
     }
     private JPanel createFlightStatusPanel() {
         // create flight status panel here
-          JPanel panel = new JPanel(new GridLayout(1, 3, 10, 10)); // 三个柜台横向布局
+          JPanel panel = new JPanel(new GridLayout(1, 3, 10, 10)); // three horizontal layout
           flight1TextArea = new JTextArea(6, 25);
           flight2TextArea = new JTextArea(6, 25);
           flight3TextArea = new JTextArea(6, 25);
