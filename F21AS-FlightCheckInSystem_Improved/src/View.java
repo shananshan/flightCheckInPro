@@ -82,8 +82,8 @@ public class View extends JFrame implements Observer,ActionListener{
         // two waiting queue,one for Economy Class Lane, another for Business Class Priority Lane
         JPanel waitingPanel = new JPanel(new GridLayout(2, 1, 5, 10));
 
-        eWTextArea = new JTextArea(15, 20);
-        bWTextArea = new JTextArea(5, 20);
+        eWTextArea = new JTextArea(10, 10);
+        bWTextArea = new JTextArea(10, 10);
 
         JScrollPane scrollPane1 = new JScrollPane(eWTextArea);
         JScrollPane scrollPane2 = new JScrollPane(bWTextArea);
@@ -167,7 +167,7 @@ public class View extends JFrame implements Observer,ActionListener{
         bWTextArea.setText("There are currently "+checkInDesk3.getBusinessQueue().size()+" people waiting in the Business Class Priority Lane:\n"+bwInfo);
 
         if(checkInDesk1.getCurrentPassenger() == null) {
-            desk1Info = "Waiting..."; // if there is not passenger,print waiting..
+            desk1Info = "Waiting..."; // if there is no passenger,print waiting..
         }else {
         	//set current passenger info to deskInfo
             desk1Info = passToString2(checkInDesk1.getCurrentPassenger());
