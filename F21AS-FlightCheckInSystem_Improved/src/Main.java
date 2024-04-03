@@ -94,6 +94,8 @@ public class Main {
         // security process
         executor.execute(BSq);
         executor.execute(ESq);
+        // use line 98 or line 99 to shutdown threads
         scheduleShutdown(executor, checkInView, 60, TimeUnit.SECONDS);
+        executor.shutdownNow(); 
     }
 }
