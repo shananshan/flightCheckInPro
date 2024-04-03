@@ -1,130 +1,115 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Observer;
 
-	
-	class FlightStats {
-	    int passengerCount;
-	    double totalWeight;
-	    double totalVolume;
-	    double weighthold;
-	    double sizehold;
-	    double passengerhold;
-	    double maxBagVolume;
-	    double maxBagWeight;
-	    ReadFiles fcs = new ReadFiles();
-	    
-	   
-	    // 鏋勯�犲嚱鏁�
-	    public FlightStats() {
-	        this.passengerCount = 0;
-	        this.totalWeight = 0.0;
-	        this.totalVolume = 0.0;
-	        this. weighthold = 0.0;
-		    this.sizehold = 0.0;
-		    this.passengerhold = 0.0;
-	    }
 
-	    // 娣诲姞涔樺鏃舵洿鏂扮粺璁′俊鎭�
-	    public void addPassenger(double weight, double volume) {
-	        this.passengerCount++;
-	        this.totalWeight += weight;
-	        this.totalVolume += volume;
-	    }
+class FlightStats {
+    int passengerCount; // The count of passengers checked.
+    double totalWeight; // Total weight of luggage 
+    double totalVolume; // Total volume of luggage 
+    double weighthold; // Percentage of total luggage weight.
+    double sizehold; // Percentage of total luggage volume.
+    double passengerhold; // Percentage of total passenger count relative to flight's max passenger capacity.
+    ReadFiles fcs = new ReadFiles(); // Helper class to read flight and passenger data from files.
+    
+    // Constructor initializes all fields to their default values.
+    public FlightStats() {
+        this.passengerCount = 0;
+        this.totalWeight = 0.0;
+        this.totalVolume = 0.0;
+        this.weighthold = 0.0;
+        this.sizehold = 0.0;
+        this.passengerhold = 0.0;
+    }
 
-	    public int getPassengerCount() {
-	        return passengerCount;
-	    }
+    // Adds a passenger's luggage weight and volume to the totals.
+    public void addPassenger(double weight, double volume) {
+        this.passengerCount++;
+        this.totalWeight += weight;
+        this.totalVolume += volume;
+    }
 
-	    public double getTotalWeight() {
-	        return totalWeight;
-	    }
+    // Returns the current passenger count.
+    public int getPassengerCount() {
+        return passengerCount;
+    }
 
-	    public double getTotalVolume() {
-	        return totalVolume;
-	    }
-	    
-	    public double getWeightHold(String flightNumber) {
-	    	Flight f  = fcs.getFlight(fcs.getFlightList(),flightNumber);
-	    	weighthold  = (totalWeight / f.getmaximumBaggageWeight() ) * 100;
-	        return weighthold;
-	    }
-	    
-	    public double getSizeHold(String flightNumber) {
-	    	Flight f  = fcs.getFlight(fcs.getFlightList(),flightNumber);
-//	    	System.out.print(f);
-	    	sizehold  = (totalVolume / f.getmaxbaggageVolumet()) * 100;
-	        return sizehold;
-	    }
-	    
-		public double getPassengerHold(String flightNumber) {
-			Flight f =  fcs.getFlight(fcs.getFlightList(),flightNumber);
-			passengerhold = (passengerCount / f.getmaxpassenger()) * 100;
-			return passengerhold;
-		}
-		
-		public double getMaxLuggageHold(String flightNumber) {
-			Flight f =  fcs.getFlight(fcs.getFlightList(),flightNumber);
-//			System.out.println("size:"+ getSizeHold(flightNumber) );
-//			System.out.println("weight:"+ getWeightHold(flightNumber) );
-			if(getSizeHold(flightNumber) > getWeightHold(flightNumber)) {
-				return getSizeHold(flightNumber);
-			}else {
-				return getWeightHold(flightNumber);
-			}
-		}
-	    
-	}
+    // Returns the total weight of checked luggage.
+    public double getTotalWeight() {
+        return totalWeight;
+    }
 
-	
-	
-	public class FlightCheckIn {
-	    private Map<String, FlightStats> flightMap;
-	    ReadFiles fcs = new ReadFiles();
-	    
-	    // 鏋勯�犲嚱鏁�
-	    public FlightCheckIn() {
-	        this.flightMap = new HashMap<>();
-	    }
+    // Returns the total volume of checked luggage.
+    public double getTotalVolume() {
+        return totalVolume;
+    }
+    
+    // Calculates and returns the weight hold percentage.
+    public double getWeightHold(String flightNumber) {
+        Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
+        weighthold = (totalWeight / f.getmaximumBaggageWeight()) * 100;
+        return weighthold;
+    }
+    
+    // Calculates and returns the size hold percentage.
+    public double getSizeHold(String flightNumber) {
+        Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
+        sizehold = (totalVolume / f.getmaxbaggageVolumet()) * 100;
+        return sizehold;
+    }
+    
+    // Calculates and returns the passenger hold percentage.
+    public double getPassengerHold(String flightNumber) {
+        Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
+        passengerhold = (passengerCount / f.getmaxpassenger()) * 100;
+        return passengerhold;
+    }
+    
+    // Determines and returns the larger of size hold or weight hold percentages.
+    public double getMaxLuggageHold(String flightNumber) {
+        Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
+        return Math.max(getSizeHold(flightNumber), getWeightHold(flightNumber));
+    }
+}
 
-	    // 澶勭悊涔樺checkin鐨勬柟娉�
-	    public void checkInPassenger(String flightNumber, double weight, double volume) {
-	        FlightStats stats = flightMap.getOrDefault(flightNumber, new FlightStats());
-	        stats.addPassenger(weight, volume);
-	        flightMap.put(flightNumber, stats);
-	        
-	    }
-	public static FlightStats getFlightStats(Map<String, FlightStats> map,String flightNumber) {
-	    	FlightStats stats = map.get(flightNumber);
-	        return stats;
-	    }
-	  
-	  
-	    
-	    public Map<String, FlightStats> getFlightMap() {
-	        return flightMap;
-	    }
-	    // 鎵撳嵃鎵�鏈夎埅鐝殑缁熻淇℃伅
-	    public void printFlightStats() throws IOException {
-	    	fcs.readFlights("Flight Detail.csv");
-	        for(Map.Entry<String, FlightStats> entry : flightMap.entrySet()) {
-	            String flightNumber = entry.getKey();
-	            FlightStats stats = entry.getValue();
-	            System.out.println("Flight Number: " + flightNumber);
-	            System.out.println("Passenger Count: " + stats.getPassengerCount());
-//	            System.out.println("Total Weight: " + stats.getTotalWeight());
-//	            System.out.println("Total Volume: " + stats.getTotalVolume());
-	            System.out.println("Weight Hold : " + stats.getWeightHold(flightNumber)+"%");
-	            System.out.println("Volume Hold : " + stats.getSizeHold(flightNumber)+"%");
-	            System.out.println("Maximum Luggage Hold : " + stats.getMaxLuggageHold(flightNumber)+"%");
-	            System.out.println("Passenger Hold : " + stats.getPassengerHold(flightNumber)+"%");
-	            
-	        
-	        }
-			
-	    }
-	}
+public class FlightCheckIn {
+    private Map<String, FlightStats> flightMap; // Maps flight numbers to their respective FlightStats.
+    ReadFiles fcs = new ReadFiles(); // Helper class to read flight and passenger data from files.
+    
+    // Constructor initializes the flightMap.
+    public FlightCheckIn() {
+        this.flightMap = new HashMap<>();
+    }
+
+    // Adds a passenger's luggage to the specified flight's stats.
+    public void checkInPassenger(String flightNumber, double weight, double volume) {
+        FlightStats stats = flightMap.getOrDefault(flightNumber, new FlightStats());
+        stats.addPassenger(weight, volume);
+        flightMap.put(flightNumber, stats);
+    }
+
+    // Retrieves FlightStats for a specific flight number.
+    public static FlightStats getFlightStats(Map<String, FlightStats> map, String flightNumber) {
+        return map.get(flightNumber);
+    }
+
+    // Returns the entire map of flight numbers to their stats.
+    public Map<String, FlightStats> getFlightMap() {
+        return flightMap;
+    }
+    
+    // Prints statistics for all flights.
+    public void printFlightStats() throws IOException {
+        fcs.readFlights("Flight Detail.csv");
+        for (Map.Entry<String, FlightStats> entry : flightMap.entrySet()) {
+            String flightNumber = entry.getKey();
+            FlightStats stats = entry.getValue();
+            System.out.println("Flight Number: " + flightNumber);
+            System.out.println("Passenger Count: " + stats.getPassengerCount());
+//            System.out.println("Weight Hold : " + stats.getWeightHold(flightNumber) + "%");
+//            System.out.println("Volume Hold : " + stats.getSizeHold(flightNumber) + "%");
+            System.out.println("Maximum Luggage Hold : " + stats.getMaxLuggageHold(flightNumber) + "%");
+            System.out.println("Passenger Hold : " + stats.getPassengerHold(flightNumber) + "%");
+        }
+    }
+}
