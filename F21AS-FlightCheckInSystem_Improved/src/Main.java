@@ -8,6 +8,10 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.SwingUtilities;
 
 public class Main{
     static WaitingPassQueue waitingPass = null;
@@ -22,6 +26,37 @@ public class Main{
     static Queue<Passenger> economySecurityCheck= new LinkedList<>(), businessSecurityCheck= new LinkedList<>();
     static Queue<Passenger> businessSecurityQueue = new LinkedList<>(), economySecurityQueue = new LinkedList<>();
 
+    public static void scheduleShutdown(ExecutorService executor, View view, long delay, TimeUnit timeUnit) {
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        // 安排在一段时间后执行的任务
+        scheduler.schedule(() -> {
+            // 关闭GUI窗口
+            if (view != null) {
+                SwingUtilities.invokeLater(() -> {
+                    view.dispose(); // 关闭窗口
+                    System.out.println("GUI closed");
+                });
+            }
+
+            // 关闭正在执行的服务
+            executor.shutdownNow();
+            System.exit(0);
+           
+            try {
+                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    System.err.println("Executor did not terminate in the specified time.");
+                    List<Runnable> droppedTasks = executor.shutdownNow();
+                    System.err.println("Executor was abruptly shut down. " + droppedTasks.size() + " tasks will not be executed.");
+                }
+            } catch (InterruptedException e) {
+                System.err.println("Termination interrupted");
+                executor.shutdownNow();
+            }
+            // 关闭调度器本身
+            scheduler.shutdownNow();
+            System.out.println("Program terminated");
+        }, delay, timeUnit);
+    }
 
     public static void main(String[] args) throws IOException{
         // we can generate a log by calling a method
@@ -65,7 +100,9 @@ public class Main{
         // security process
         executor.execute(BSq);
         executor.execute(ESq);
+        
+        scheduleShutdown(executor, checkInView,60, TimeUnit.SECONDS);
 
-        executor.shutdown();
+//        executor.shutdown();
     }
 }
