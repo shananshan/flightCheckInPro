@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,26 +22,53 @@ public class ReadFiles {
     static LocalTime flightTime = LocalTime.now();
 
     //Reads passenger data from a CSV file and populates the passengerList
-    public void readPassengers(String csvFilePath) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
-        String line = reader.readLine(); // Assume the first line contains headers and skip it
+//    public void readPassengers(String csvFilePath) throws IOException {
+//        BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
+//        String line = reader.readLine(); // Assume the first line contains headers and skip it
+//        while ((line = reader.readLine()) != null) {
+//            String[] data = line.split(",");
+//            Passenger p = new Passenger(data);
+//            passengerList.add(p);
+//        }
+//        reader.close();
+//    }
+//
+//    //Reads flight data from a CSV file and populates the flightList.
+//    public void readFlights(String csvFilePath) throws IOException {
+//        BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
+//        String line = reader.readLine(); // Assume the first line contains headers and skip it
+//        while ((line = reader.readLine()) != null) {
+//            String[] data = line.split(",");
+//            flightList.add(new Flight(data));
+//        }
+//        reader.close();
+//    }
+    
+     public void readPassengers(String resourcePath) throws IOException {
+        InputStream is = getClass().getResourceAsStream(resourcePath);
+        if (is == null) {
+            throw new IllegalArgumentException("Resource not found: " + resourcePath);
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        String line = reader.readLine(); // Skip the first line with headers
         while ((line = reader.readLine()) != null) {
             String[] data = line.split(",");
-            Passenger p = new Passenger(data);
+            Passenger p = new Passenger(data); // Assume you have a suitable constructor
             passengerList.add(p);
         }
-        reader.close();
     }
 
-    //Reads flight data from a CSV file and populates the flightList.
-    public void readFlights(String csvFilePath) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
-        String line = reader.readLine(); // Assume the first line contains headers and skip it
+     public void readFlights(String resourcePath) throws IOException {
+        InputStream is = getClass().getResourceAsStream(resourcePath);
+        if (is == null) {
+            throw new IllegalArgumentException("Resource not found: " + resourcePath);
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        String line = reader.readLine(); // Skip the first line with headers
         while ((line = reader.readLine()) != null) {
             String[] data = line.split(",");
-            flightList.add(new Flight(data));
+            flightList.add(new Flight(data)); // Assume you have a suitable constructor
         }
-        reader.close();
     }
 
     public List<Passenger> getPassengerList() {
