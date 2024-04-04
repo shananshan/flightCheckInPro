@@ -205,15 +205,15 @@ public class View extends JFrame implements Observer,ActionListener{
         	}else {
         	if(flightcode.equals("DA-4562")) {
         		//show flightInfo in flightTextArea
-        		String a = String.format("Flight %s\n %d checked of 120\n ",flightcode, flightStats.getPassengerCount());	
+        		String a = String.format("Flight %s\n%d checked of 120\n",flightcode, flightStats.getPassengerCount());
         		String fs = FlightToString(flightcode,flightStats);
         		flight1TextArea.setText(a + fs);
         	}else if(flightcode.equals("PA-5723")) {
-        		String b = String.format("Flight %s\n %d checked of 200\n ",flightcode, flightStats.getPassengerCount());
+        		String b = String.format("Flight %s\n%d checked of 200\n",flightcode, flightStats.getPassengerCount());
         		String fs = FlightToString(flightcode,flightStats);
         		flight2TextArea.setText(b + fs);
         	}else if(flightcode.equals("BI-3892")) {
-        		String c = String.format("Flight %s\n %d checked of 300\n ",flightcode, flightStats.getPassengerCount());
+        		String c = String.format("Flight %s\n%d checked of 300\n",flightcode, flightStats.getPassengerCount());
         		String fs = FlightToString(flightcode,flightStats);
         		flight3TextArea.setText(c+fs);
         	}
