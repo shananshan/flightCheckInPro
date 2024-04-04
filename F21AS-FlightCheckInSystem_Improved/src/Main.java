@@ -84,7 +84,7 @@ public class Main{
         executor.execute(BSq);
         executor.execute(ESq);
         // use line 87 or line 88 to shut down threads
-        scheduleShutdown(executor, checkInView,1, TimeUnit.MINUTES);
+        scheduleShutdown(executor, checkInView,10, TimeUnit.MINUTES);
 //        executor.shutdown();
     }
 }
