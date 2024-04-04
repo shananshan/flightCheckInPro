@@ -53,8 +53,8 @@ public class Main{
         List<Passenger> passengerList;
         List<Flight> flightList;
         ReadFiles fcs = new ReadFiles();
-        fcs.readPassengers("NEW_passenger_bookings_2.0.csv");
-        fcs.readFlights("Flight Detail.csv");
+        fcs.readPassengers("/NEW_passenger_bookings_2.0.csv");
+        fcs.readFlights("/Flight Detail.csv");
         passengerList = fcs.getPassengerList();
         flightList = fcs.getFlightList();
         CheckInDesk.preCheck(passengerList);
