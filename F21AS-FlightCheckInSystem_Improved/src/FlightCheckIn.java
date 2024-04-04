@@ -111,14 +111,16 @@ public class FlightCheckIn {
     public void printFlightStats() throws IOException {
         fcs.readFlights("Flight Detail.csv");
         for (Map.Entry<String, FlightStats> entry : flightMap.entrySet()) {
-            String flightNumber = entry.getKey();
-            FlightStats stats = entry.getValue();
-            System.out.println("Flight Number: " + flightNumber);
-            System.out.println("Passenger Count: " + stats.getPassengerCount());
-//            System.out.println("Weight Hold : " + stats.getWeightHold(flightNumber) + "%");
-//            System.out.println("Volume Hold : " + stats.getSizeHold(flightNumber) + "%");
-            System.out.println("Maximum Luggage Hold : " + stats.getMaxLuggageHold(flightNumber) + "%");
-            System.out.println("Passenger Hold : " + stats.getPassengerHold(flightNumber) + "%");
+            if (entry !=null) {
+                String flightNumber = entry.getKey();
+                FlightStats stats = entry.getValue();
+                System.out.println("Flight Number: " + flightNumber);
+                System.out.println("Passenger Count: " + stats.getPassengerCount());
+//              System.out.println("Weight Hold : " + stats.getWeightHold(flightNumber) + "%");
+//              System.out.println("Volume Hold : " + stats.getSizeHold(flightNumber) + "%");
+                System.out.println("Maximum Luggage Hold : " + stats.getMaxLuggageHold(flightNumber) + "%");
+                System.out.println("Passenger Hold : " + stats.getPassengerHold(flightNumber) + "%");
+            }
         }
     }
 }
