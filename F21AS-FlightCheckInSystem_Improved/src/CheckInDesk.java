@@ -236,13 +236,15 @@ public class CheckInDesk implements Runnable {
                synchronized (this) {
                    currentPassenger = economyCheckIn.poll();
                }
-               try {
-                   generateEconomyDesk(currentPassenger, flightList);
-                   TimeUnit.SECONDS.sleep(rand.nextInt(5) + 0);
-                   System.out.println("Desk e is processing: " + currentPassenger);
-                   System.out.println("Size of E waiting for security check is "+economySecurityCheck.size());
-               } catch (InterruptedException e) {
-                   throw new RuntimeException(e);
+               if (currentPassenger != null) {
+                   try {
+                       generateEconomyDesk(currentPassenger, flightList);
+                       TimeUnit.SECONDS.sleep(rand.nextInt(5) + 0);
+                       System.out.println("Desk e is processing: " + currentPassenger);
+                       System.out.println("Size of E waiting for security check is " + economySecurityCheck.size());
+                   } catch (InterruptedException e) {
+                       throw new RuntimeException(e);
+                   }
                }
            }else{
                currentPassenger = null;
@@ -251,13 +253,15 @@ public class CheckInDesk implements Runnable {
                synchronized (this) {
                    currentPassenger = businessCheckIn.poll();
                }
-               try {
-                   generateBusinessDesk(currentPassenger, flightList);
-                   TimeUnit.SECONDS.sleep(rand.nextInt(5) + 0);
-                   System.out.println("Size of B waiting for security check is "+businessSecurityCheck.size());
-                   System.out.println("Desk b is processing: " + currentPassenger);
-               } catch (InterruptedException e) {
-                   throw new RuntimeException(e);
+               if (currentPassenger != null) {
+                   try {
+                       generateBusinessDesk(currentPassenger, flightList);
+                       TimeUnit.SECONDS.sleep(rand.nextInt(5) + 0);
+                       System.out.println("Size of B waiting for security check is " + businessSecurityCheck.size());
+                       System.out.println("Desk b is processing: " + currentPassenger);
+                   } catch (InterruptedException e) {
+                       throw new RuntimeException(e);
+                   }
                }
            }else{
                currentPassenger = null;

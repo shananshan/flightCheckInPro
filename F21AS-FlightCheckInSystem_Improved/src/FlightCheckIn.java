@@ -47,27 +47,36 @@ class FlightStats {
     // Calculates and returns the weight hold percentage.
     public double getWeightHold(String flightNumber) {
         Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
-        weighthold = (totalWeight / f.getmaximumBaggageWeight()) * 100;
+        if (f != null) {
+            weighthold = (totalWeight / f.getmaximumBaggageWeight()) * 100;
+        }
         return weighthold;
     }
     
     // Calculates and returns the size hold percentage.
     public double getSizeHold(String flightNumber) {
         Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
-        sizehold = (totalVolume / f.getmaxbaggageVolumet()) * 100;
+        if(f!=null){
+            sizehold = (totalVolume / f.getmaxbaggageVolumet()) * 100;
+        }
         return sizehold;
     }
     
     // Calculates and returns the passenger hold percentage.
     public double getPassengerHold(String flightNumber) {
         Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
-        passengerhold = (passengerCount / f.getmaxpassenger()) * 100;
+        if(f!=null) {
+        	passengerhold = (passengerCount / f.getmaxpassenger()) * 100;
+        }
         return passengerhold;
     }
     
     // Determines and returns the larger of size hold or weight hold percentages.
     public double getMaxLuggageHold(String flightNumber) {
         Flight f = fcs.getFlight(fcs.getFlightList(),flightNumber);
+//        if(f!=null) {
+        	
+//        }
         return Math.max(getSizeHold(flightNumber), getWeightHold(flightNumber));
     }
 }
